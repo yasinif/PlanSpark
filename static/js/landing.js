@@ -46,7 +46,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
   deferredPrompt = e;
   
   if (pwaInstallBanner) {
-    // تنظیم تایمر روی ۳۰ ثانیه برای لندینگ
     setTimeout(() => {
       if (deferredPrompt) {
         pwaInstallBanner.classList.add('show');
@@ -69,8 +68,6 @@ if (pwaInstallBtn) {
 if (pwaCloseBtn) {
   pwaCloseBtn.addEventListener('click', () => {
     pwaInstallBanner.classList.remove('show');
-    // در صفحه لندینگ چیزی در سشن ذخیره نمی‌شود
-    // در نتیجه با هر بار رفرش صفحه، ۳۰ ثانیه بعد دوباره بنر می‌آید
   });
 }
 

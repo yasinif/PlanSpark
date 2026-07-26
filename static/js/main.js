@@ -38,7 +38,6 @@ function toPersian(n) {
   return String(n).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 }
 function padPersian(n, w) {
-  /* 🎯 استفاده از تابع localizeN به جای toPersian تا زبان سایت در نظر گرفته شود */
   return localizeN(String(n).padStart(w, '0'));
 }
 function localizeN(n) {
@@ -624,7 +623,6 @@ class PickerController {
   prefill(expiresStr) {
     if (!expiresStr) return;
     
-    // تبدیل اعداد فارسی به انگلیسی برای جلوگیری از خطای خواندن تاریخ
     const engStr = String(expiresStr).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
     
     const [jy, jm, jd] = engStr.split('-').map(Number);
@@ -972,23 +970,22 @@ function showJSToast(msg) {
   }, 4000);
 }
 
-// --- ▷ اعتبارسنجی و رفتار هوشمند فرم ایجاد تسک (Create): Validate create task form ---
+// --- ▷ (Create): Validate create task form ---
 const createForm = document.getElementById('createTaskForm');
 
-// تابع تنظیم ارتفاع خودکار (Auto-resize)
+// (Auto-resize)
 function autoResize(el) {
   if (!el) return;
-  el.style.height = 'auto'; // ریست کردن ارتفاع
-  el.style.height = (el.scrollHeight) + 'px'; // تنظیم ارتفاع بر اساس محتوا
+  el.style.height = 'auto'; 
+  el.style.height = (el.scrollHeight) + 'px';
 }
 
-// تابع بررسی محدودیت کاراکتر و قرمز کردن ظاهر باکس
 function checkLimits(el, maxLimit) {
   if (!el) return;
   if (el.value.length > maxLimit) {
-    el.style.borderColor = '#ff4d4d'; // حاشیه قرمز
-    el.style.color = '#ff4d4d';       // متن قرمز
-    el.style.backgroundColor = 'rgba(255, 77, 77, 0.05)'; // پس‌زمینه محو قرمز
+    el.style.borderColor = '#ff4d4d';
+    el.style.color = '#ff4d4d';
+    el.style.backgroundColor = 'rgba(255, 77, 77, 0.05)'; 
   } else {
     el.style.borderColor = '';
     el.style.color = '';
@@ -999,11 +996,9 @@ function checkLimits(el, maxLimit) {
 let ctTitle = document.getElementById('ct_title');
 let ctDesc = document.getElementById('ct_description');
 
-// 🎯 حذف محدودیت‌های سخت‌گیرانه HTML تا کاربر بتواند آزادانه تایپ کند
 if (ctTitle) ctTitle.removeAttribute('maxlength');
 if (ctDesc) ctDesc.removeAttribute('maxlength');
 
-// جادو: تبدیل اینپوت یک‌خطیِ عنوان به تکست‌اریا تا بتواند ارتفاعش زیاد شود
 if (ctTitle && ctTitle.tagName.toLowerCase() === 'input') {
   const textareaTitle = document.createElement('textarea');
   textareaTitle.id = ctTitle.id;
@@ -1012,19 +1007,17 @@ if (ctTitle && ctTitle.tagName.toLowerCase() === 'input') {
   textareaTitle.placeholder = ctTitle.placeholder;
   textareaTitle.value = ctTitle.value;
   textareaTitle.setAttribute('rows', '1');
-  textareaTitle.style.resize = 'none'; // بستن قابلیت کشیدن دستی
-  textareaTitle.style.overflow = 'hidden'; // مخفی کردن اسکرول‌بار
+  textareaTitle.style.resize = 'none';
+  textareaTitle.style.overflow = 'hidden';
   ctTitle.parentNode.replaceChild(textareaTitle, ctTitle);
-  ctTitle = textareaTitle; // آپدیت کردن متغیر
+  ctTitle = textareaTitle;
 }
 
-// استایل اولیه برای باکس توضیحات
 if (ctDesc) {
   ctDesc.style.resize = 'none';
   ctDesc.style.overflow = 'hidden';
 }
 
-// واکنش زنده هنگام تایپ کردن کاربر
 if (ctTitle) {
   ctTitle.addEventListener('input', function() {
     autoResize(this);
@@ -1041,43 +1034,39 @@ if (ctDesc) {
   setTimeout(() => autoResize(ctDesc), 100);
 }
 
-// بررسی نهایی هنگام کلیک روی دکمه ذخیره
 if (createForm) {
   createForm.addEventListener('submit', function (e) {
     const isFa = document.documentElement.lang === 'fa' || window.USER_LANG_MAIN === 'fa';
     
-    // ۱. بررسی عنوان
     if (ctTitle) {
       const titleVal = ctTitle.value.trim();
       if (!titleVal) {
-        e.preventDefault(); // متوقف کردن ارسال به سرور
+        e.preventDefault();
         showJSToast(isFa ? 'عنوان تسک الزامی است.' : 'Task title is required.');
         ctTitle.focus();
         return;
       }
       if (titleVal.length > 100) {
-        e.preventDefault(); // متوقف کردن ارسال به سرور
+        e.preventDefault();
         showJSToast(isFa ? 'عنوان تسک نباید بیشتر از ۱۰۰ کاراکتر باشد.' : 'Title cannot exceed 100 characters.');
         ctTitle.focus();
         return;
       }
     }
 
-    // ۲. بررسی توضیحات
     if (ctDesc) {
       const descVal = ctDesc.value.trim();
       if (descVal.length > 500) {
-        e.preventDefault(); // متوقف کردن ارسال به سرور
+        e.preventDefault();
         showJSToast(isFa ? 'توضیحات نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد.' : 'Description cannot exceed 500 characters.');
         ctDesc.focus();
         return;
       }
     }
 
-    // ۳. بررسی تاریخ
     const hiddenDate = document.getElementById('ct_expires_at_hidden');
     if (!hiddenDate || !hiddenDate.value) {
-      e.preventDefault(); // متوقف کردن ارسال به سرور
+      e.preventDefault();
       const msg = (window.I18N && window.I18N.js_alert_select_date) 
         ? window.I18N.js_alert_select_date 
         : 'Please select an expiry date.';
@@ -1087,7 +1076,7 @@ if (createForm) {
   });
 }
 
-// --- ▷ اعتبارسنجی فرم ویرایش تسک (Edit): Validate edit task form ---
+// --- ▷ (Edit): Validate edit task form ---
 const editForm = document.getElementById('editTaskForm');
 if (editForm) {
   editForm.addEventListener('submit', function (e) {
@@ -1151,7 +1140,6 @@ document.querySelectorAll('[data-modal]').forEach(btn => {
 const openCreateBtn = document.getElementById('openCreateModalBtn');
 if (openCreateBtn) {
   openCreateBtn.addEventListener('click', () => {
-    // ریست کامل تاریخ و زمان بدون انتخاب پیش‌فرض تاریخ امروز
     if (createPicker) {
       createPicker._jy = null; createPicker._jm = null; createPicker._jd = null;
       createPicker._hh24 = null; createPicker._mm = null;
@@ -1177,19 +1165,16 @@ document.querySelectorAll('[id^="editBtn-"]').forEach(btn => {
     const expires   = btn.getAttribute('data-expires');   // Jalali YYYY-MM-DD
     const estimated = btn.getAttribute('data-estimated');
 
-    // ۱. مقداردهی عنوان و توضیحات
     const titleEl = document.getElementById('et_title');
     const descEl  = document.getElementById('et_description');
     if (titleEl) titleEl.value = title || '';
     if (descEl)  descEl.value  = desc  || '';
 
-    // ۲. مقداردهی اولویت (هم سلکت اصلی و هم سلکت سفارشی انیمیشنی)
     const priorityEl = document.getElementById('et_priority');
     if (priorityEl) {
       priorityEl.value = priority || '';
       priorityEl.dispatchEvent(new Event('change', { bubbles: true }));
       
-      // آپدیت ظاهر سلکت کاستوم شیشه‌ای
       const wrapper = priorityEl.closest('.custom-select-wrapper');
       if (wrapper) {
         const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
@@ -1202,7 +1187,6 @@ document.querySelectorAll('[id^="editBtn-"]').forEach(btn => {
       }
     }
 
-    // ۳. مقداردهی زمان تخمینی
     const estimatedEl = document.getElementById('et_estimated_time');
     if (editDurPicker) {
       if (estimated && estimated !== 'None') editDurPicker.prefill(estimated);
@@ -1211,10 +1195,8 @@ document.querySelectorAll('[id^="editBtn-"]').forEach(btn => {
       estimatedEl.value = (estimated && estimated !== 'None') ? estimated : '';
     }
 
-    // ۴. مقداردهی دقیق تاریخ و زمان انقضای قبلی
     if (editPicker) {
       if (expires && expires !== 'None' && expires !== '') {
-        // تبدیل اعداد فارسی به انگلیسی برای ساعت و تقویم
         const engExpires = String(expires).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
         
         const parts = engExpires.split(' ');
@@ -1234,7 +1216,6 @@ document.querySelectorAll('[id^="editBtn-"]').forEach(btn => {
         }
         editPicker._updateDisplay();
       } else {
-        // اگر تاریخ قبلا خالی بوده، آن را کلا خالی نگه دار (تاریخ امروز را به زور وارد نکن)
         editPicker._jy = null; editPicker._jm = null; editPicker._jd = null;
         editPicker._hh24 = null; editPicker._mm = null;
         if (editPicker.hiddenInput) editPicker.hiddenInput.value = '';
@@ -1297,12 +1278,11 @@ document.querySelectorAll('[id^="deleteBtn-"]').forEach(btn => {
       ? 'حذف تسک' 
       : 'Delete Task';
 
-    // استفاده از مودال کاستوم در صورت وجود، در غیر این‌صورت پیش‌فرض مرورگر
     if (window.showCustomConfirm) {
       window.showCustomConfirm(titleText, msg, () => {
         const form = document.getElementById(formId);
         if (form) form.submit();
-      }, true); // true = نمایش دکمه تایید با استایل قرمز (btn-delete)
+      }, true);
     } else {
       if (confirm(msg)) {
         const form = document.getElementById(formId);
@@ -1351,20 +1331,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('taskLiveSearch');
   const taskCards = document.querySelectorAll('.task-card');
   const countBadge = document.getElementById('taskCountBadge');
-  const clearBtn = document.getElementById('clearSearchBtn'); // دکمه ضربدر
+  const clearBtn = document.getElementById('clearSearchBtn');
 
   if (searchInput) {
-    // یک تابع واحد برای بررسی وضعیت جستجو
     function filterTasks() {
       const searchTerm = searchInput.value.toLowerCase().trim();
       let visibleCount = 0;
 
-      // نمایش یا مخفی کردن دکمه ضربدر بر اساس طول متن
       if (clearBtn) {
         clearBtn.style.display = searchTerm.length > 0 ? 'block' : 'none';
       }
 
-      // فیلتر کردن کارت‌ها
       taskCards.forEach(card => {
         const titleElement = card.querySelector('.task-title');
         if (titleElement) {
@@ -1378,21 +1355,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
-      // آپدیت کردن عدد بج (شمارنده تسک‌ها)
       if (countBadge) {
         countBadge.textContent = visibleCount;
       }
     }
 
-    // وقتی کاربر تایپ می‌کند، فیلتر را اجرا کن
     searchInput.addEventListener('input', filterTasks);
 
-    // وقتی کاربر روی دکمه ضربدر کلیک می‌کند
     if (clearBtn) {
       clearBtn.addEventListener('click', function() {
-        searchInput.value = ''; // خالی کردن متن باکس
-        filterTasks(); // اجرای مجدد فیلتر تا لیست کامل تسک‌ها برگردد
-        searchInput.focus(); // برگرداندن نشانگر موس به داخل باکس برای راحتی بیشتر کاربر
+        searchInput.value = '';
+        filterTasks();
+        searchInput.focus();
       });
     }
   }
@@ -1403,18 +1377,15 @@ document.addEventListener('DOMContentLoaded', function() {
 const nativeSelects = document.querySelectorAll('select.filter-select, select.form-control');
 
 nativeSelects.forEach(select => {
-  // ۱. ساخت کانتینر اصلی
   const wrapper = document.createElement('div');
   wrapper.className = 'custom-select-wrapper';
   select.parentNode.insertBefore(wrapper, select);
-  wrapper.appendChild(select); // انتقال سلکت اصلی به داخل کانتینر
+  wrapper.appendChild(select);
   
-  // ۲. ساخت دکمه‌ای که کاربر می‌بیند
   const trigger = document.createElement('div');
   trigger.className = 'custom-select-trigger';
   const selectedOpt = select.options[select.selectedIndex];
   
-  // بررسی وجود آیکون برای این سلکت باکس
   const iconSrc = select.getAttribute('data-icon');
   let iconHtml = '';
   if (iconSrc) {
@@ -1424,53 +1395,42 @@ nativeSelects.forEach(select => {
   trigger.innerHTML = `<div style="display: flex; align-items: center;">${iconHtml}<span>${selectedOpt ? selectedOpt.text : ''}</span></div>`;
   wrapper.appendChild(trigger);
   
-  // ۳. ساخت لیست منو
   const optionsList = document.createElement('div');
   optionsList.className = 'custom-select-options';
   wrapper.appendChild(optionsList);
   
-  // ۴. کپی کردن گزینه‌ها از سلکت اصلی به منوی جدید
   Array.from(select.options).forEach(option => {
     const optDiv = document.createElement('div');
     optDiv.className = 'custom-select-option';
     optDiv.textContent = option.text;
     if(option.selected) optDiv.classList.add('selected');
     
-    // وقتی کاربر روی گزینه کاستوم کلیک می‌کند
     optDiv.addEventListener('click', function(e) {
       e.stopPropagation();
       
-      // مقدار سلکت اصلی را آپدیت کن
       select.value = option.value;
       trigger.querySelector('span').textContent = option.text;
       
-      // رنگ گزینه انتخاب شده را آپدیت کن
       optionsList.querySelectorAll('.custom-select-option').forEach(el => el.classList.remove('selected'));
       optDiv.classList.add('selected');
       
-      // منو را ببند
       wrapper.classList.remove('open');
       
-      // به فرم‌ها اطلاع بده که مقدار تغییر کرده است
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
     
     optionsList.appendChild(optDiv);
   });
   
-  // باز و بسته شدن با کلیک
   trigger.addEventListener('click', function(e) {
     e.stopPropagation();
-    // ابتدا بقیه منوهای باز را ببند
     document.querySelectorAll('.custom-select-wrapper').forEach(w => {
       if(w !== wrapper) w.classList.remove('open');
     });
-    // حالا این منو را باز/بسته کن
     wrapper.classList.toggle('open');
   });
 });
 
-// کلیک بیرون از منو باعث بسته شدن آن می‌شود
 document.addEventListener('click', function() {
   document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
 });
@@ -1491,12 +1451,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
   deferredPrompt = e;
 
   if (pwaInstallBanner) {
-    // اگر کاربر در این نشست (پس از لاگین) بنر را قبلاً بسته است، متوقف شو
     if (sessionStorage.getItem('pwaClosedInSession') === 'true') {
       return;
     }
 
-    // تنظیم تایمر روی ۳۰ ثانیه برای داشبورد کاربری
     setTimeout(() => {
       if (deferredPrompt) {
         pwaInstallBanner.classList.add('show');
@@ -1519,7 +1477,6 @@ if (pwaInstallBtn) {
 if (pwaCloseBtn) {
   pwaCloseBtn.addEventListener('click', () => {
     pwaInstallBanner.classList.remove('show');
-    // ثبت در حافظه: بنر بسته شد و تا لاگ‌اوت بعدی کاربر، دیگر مزاحمش نشو
     sessionStorage.setItem('pwaClosedInSession', 'true');
   });
 }

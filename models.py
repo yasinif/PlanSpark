@@ -65,12 +65,10 @@ class User(UserMixin, db.Model):
     date_format: str = db.Column(db.String(10), nullable=False, default="jalali")
     date_display_style: str = db.Column(db.String(10), nullable=False, default="text")
     # --- ▷ Recovery System Fields ---
-    # --- سیستم بازیابی رمز عبور (۲ کلمه امنیتی) ---
     recovery_w1_hash: str = db.Column(db.String(128), nullable=False)
     recovery_w2_hash: str = db.Column(db.String(128), nullable=False)
     
     # --- ▷ Rate Limiting Fields ---
-    # سیستم ضد هک (Rate Limiting)
     recovery_attempts: int = db.Column(db.Integer, nullable=False, default=0)
     last_recovery_attempt: Optional[datetime] = db.Column(db.DateTime, nullable=True)
     created_at: datetime = db.Column(

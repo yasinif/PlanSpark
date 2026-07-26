@@ -112,10 +112,9 @@
           {% if request.endpoint == 'login' %}
             <a href="{{ url_for('register') }}" class="btn btn-outline btn-sm">{{ t.btn_register }}</a>
           {% else %}
-            <!-- با این ساختار، هدر لندینگ دقیقا مشابه صفحه لاگین می‌شود -->
             <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">{{ t.btn_login }}</a>
           {% endif %}
-        {% endif %} <!-- 🎯 این تگ در کدهای شما جا افتاده بود -->
+        {% endif %} 
       </nav>
     </div>
   </header>
@@ -127,7 +126,6 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <!-- دسته‌بندی 'error' را هم به 'danger' متصل کردیم تا رنگ قرمز در همه حال کار کند -->
           <div class="flash-toast flash-{{ 'danger' if category == 'error' else category }}">
             <span class="toast-text">{{ message }}</span>
             <button class="toast-close" aria-label="✕" onclick="this.parentElement.remove()">✕</button>
@@ -234,10 +232,8 @@
   // ── Global Configuration ────────────────────────────────────────
   const USER_LANG       = {{ user_lang | tojson }};
   const USER_DATE_FMT   = {{ user_date_fmt | tojson }};
-  // گرفتن استایل تاریخ با هندل کردن حالت کاربر مهمان
   const USER_DATE_STYLE = {{ (current_user.date_display_style if current_user.is_authenticated else 'text') | tojson }};
 
-  // تعریف کامل تمام آرایه‌های مورد نیاز بدون هیچ حذفیات
   const JALALI_MONTHS_FA = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
   const JALALI_MONTHS_EN = ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar','Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'];
   const GREG_MONTHS_EN   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -257,24 +253,18 @@
 
   function updateClock() {
     const now = new Date();
-    // محاسبه زمان دقیق تهران
     const tehranMs = now.getTime() + now.getTimezoneOffset() * 60000 + 210 * 60000;
     const t = new Date(tehranMs);
 
-    // محاسبه ساعت، دقیقه، ثانیه
     const hh = String(t.getHours()).padStart(2,'0');
     const mm = String(t.getMinutes()).padStart(2,'0');
     const ss = String(t.getSeconds()).padStart(2,'0');
     const timeStr = localizeNum(`${hh}:${mm}:${ss}`);
 
-    // بهینه‌سازی: تبدیل تاریخ فقط زمانی انجام شود که روز تغییر کرده باشد
     if (t.getDate() !== lastCalculatedDay) {
       lastCalculatedDay = t.getDate();
       
       if (USER_DATE_STYLE === 'numeric') {
-        // ==========================================
-        // حالت ۱: تاریخ کاملاً عددی (YYYY/MM/DD)
-        // ==========================================
         if (USER_DATE_FMT === 'gregorian') {
           const m = String(t.getMonth() + 1).padStart(2, '0');
           const d = String(t.getDate()).padStart(2, '0');
@@ -292,14 +282,11 @@
           }
         }
       } else {
-        // ==========================================
-        // حالت ۲: ترکیبی (حروفی و عددی)
-        // ==========================================
+      
         if (USER_DATE_FMT === 'gregorian') {
           if (USER_LANG === 'fa') {
             cachedDateStr = `${localizeNum(t.getDate())} ${GREG_MONTHS_FA[t.getMonth()]} ${localizeNum(t.getFullYear())}`;
           } else {
-            // فرمت اصلاح شده: اول روز، بعد ماه، بعد سال (بدون کاما)
             cachedDateStr = `${t.getDate()} ${GREG_MONTHS_EN[t.getMonth()]} ${t.getFullYear()}`;
           }
         } else {
@@ -308,7 +295,6 @@
             if (USER_LANG === 'fa') {
               cachedDateStr = `${localizeNum(j.jd)} ${JALALI_MONTHS_FA[j.jm - 1]} ${localizeNum(j.jy)}`;
             } else {
-              // فرمت اصلاح شده: اول روز، بعد ماه، بعد سال (بدون کاما)
               cachedDateStr = `${j.jd} ${JALALI_MONTHS_EN[j.jm - 1]} ${j.jy}`;
             }
           } catch(e) {
@@ -318,7 +304,6 @@
       }
     }
 
-    // هوشمندسازی جهت متن برای جلوگیری از به هم ریختگی اعداد
     const dateDir = USER_LANG === 'fa' ? 'rtl' : 'ltr';
     const el = document.getElementById('jalaliTime');
     if (el) el.innerHTML = `<span dir="${dateDir}">${cachedDateStr}</span> &nbsp;⏱&nbsp; <span dir="ltr">${timeStr}</span>`;
@@ -332,7 +317,6 @@
     document.body.classList.toggle('dark', isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     
-    // آپدیت کردن دکمه تم در هدر (برای صفحاتی که هدر دکمه تم دارد)
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
       const themeIcon = themeToggle.querySelector('.app-icon');
@@ -344,7 +328,6 @@
       themeToggle.setAttribute('aria-pressed', String(isDark));
     }
 
-    // آپدیت کردن دکمه‌های مجزا در صفحه تنظیمات (در صورت وجود)
     const lightBtn = document.getElementById('themeLightBtn');
     const darkBtn  = document.getElementById('themeDarkBtn');
     if (lightBtn && darkBtn) {
@@ -358,10 +341,8 @@
     }
   };
 
-  // اعمال تم هنگام لود صفحه به صورت سراسری
   window.applyTheme(localStorage.getItem('theme') === 'dark');
 
-  // رویداد کلیک برای دکمه هدر
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
@@ -372,7 +353,7 @@
   // ── Global Custom Confirm ───────────────────────────────────────
   window.showCustomConfirm = function(title, message, confirmCallback, isDestructive = false) {
     const modal = document.getElementById('globalConfirmModal');
-    if (!modal) { // اگر مودال به هر دلیلی لود نشد، از پیش‌فرض مرورگر استفاده کن
+    if (!modal) {
       if (confirm(message)) confirmCallback();
       return;
     }
@@ -384,7 +365,6 @@
     const cancelBtn = document.getElementById('globalConfirmCancelBtn');
     const iconBox = document.getElementById('globalConfirmIconBox');
     
-    // استایل‌های پویا: دکمه و آیکون قرمز (برای خروج/حذف) یا حالت عادی
     if (isDestructive) {
       okBtn.className = 'btn btn-delete';
       iconBox.style.background = 'rgba(239, 68, 68, 0.15)';
@@ -395,7 +375,6 @@
       iconBox.style.border = '1px solid var(--border)';
     }
     
-    // کلون کردن برای پاک‌سازی ایونت‌های کلیکِ دفعات قبل
     const newOkBtn = okBtn.cloneNode(true);
     const newCancelBtn = cancelBtn.cloneNode(true);
     okBtn.parentNode.replaceChild(newOkBtn, okBtn);
@@ -413,7 +392,6 @@
     modal.classList.remove('hidden');
   };
 
-  // بستن مودال در صورت کلیک روی فضای خالی پشت آن (Overlay)
   const confirmOverlay = document.getElementById('globalConfirmModal');
   if (confirmOverlay) {
     confirmOverlay.addEventListener('click', function(e) {
@@ -427,15 +405,14 @@
     logoutBtn.addEventListener('click', function() {
       const titleText = USER_LANG === 'fa' ? 'خروج از حساب' : 'Log Out';
       
-      // اجرای مودال جدید به جای confirm() پیش‌فرض مرورگر
       window.showCustomConfirm(titleText, {{ t.logout_confirm | tojson }}, function() {
         sessionStorage.removeItem('pwaClosedInSession');
         document.getElementById('logoutForm').submit();
-      }, true); // کلمه true به معنی این است که این یک اکشن حساس/قرمز است
+      }, true);
     });
   }
 
-  // ── Auto-Restore Scroll Position (رفع مشکل پریدن صفحه) ─────────
+  // ── Auto-Restore Scroll Position ─────────
   window.addEventListener('beforeunload', () => {
     sessionStorage.setItem('scrollPosition', window.scrollY);
   });
@@ -465,21 +442,16 @@
   window.addEventListener('scroll', function() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
-    // اگر هدر وجود داشت و اسکرول از 60 پیکسل بیشتر شد (برای جلوگیری از مخفی شدن در همون بالای صفحه)
     if (siteHeader && scrollTop > 60) {
       if (scrollTop > lastScrollTop) {
-        // کاربر به سمت پایین اسکرول می‌کند: هدر را مخفی کن
         siteHeader.classList.add('header-hidden');
       } else {
-        // کاربر به سمت بالا اسکرول می‌کند: هدر را نشان بده
         siteHeader.classList.remove('header-hidden');
       }
     } else if (siteHeader && scrollTop <= 60) {
-       // اگر به نقطه صفر صفحه رسیدیم مطمئن شو هدر باز است
        siteHeader.classList.remove('header-hidden');
     }
     
-    // ذخیره موقعیت اسکرول (جلوگیری از اعداد منفی در مرورگر سافاری iOS)
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   }, { passive: true });
 

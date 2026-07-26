@@ -205,17 +205,14 @@ def create_app() -> Flask:
         form = RegisterForm()
         if form.validate_on_submit():
 
-            # --- اعتبارسنجی سخت‌گیرانه رمز عبور ---
             if not PASSWORD_REGEX.match(form.password.data):
                 form.password.errors.append("val_password_format")
                 return render_template("register.html", form=form)
-            # جلوگیری از ورود کلمات امنیتی تکراری
             w1 = form.recovery_word_1.data.strip().lower()
             w2 = form.recovery_word_2.data.strip().lower()
             if w1 == w2:
                 form.recovery_word_2.errors.append("val_rec_word_duplicate")
                 return render_template("register.html", form=form)
-            # ------------------------------------
             
             # Check duplicate username (case-insensitive)
 
@@ -231,7 +228,6 @@ def create_app() -> Flask:
                     form.password.data
                 ).decode("utf-8")
                 
-                # هش کردن کلمات بازیابی برای امنیت صددرصدی
                 w1_hash = bcrypt.generate_password_hash(form.recovery_word_1.data.strip().lower()).decode("utf-8")
                 w2_hash = bcrypt.generate_password_hash(form.recovery_word_2.data.strip().lower()).decode("utf-8")
 
@@ -295,7 +291,6 @@ def create_app() -> Flask:
 
         normalized_guesses = [g.strip().lower() for g in guesses]
         
-        # مقایسه هشِ کلمات وارد شده با دیتابیس
         match_1 = bcrypt.check_password_hash(user.recovery_w1_hash, normalized_guesses[0])
         match_2 = bcrypt.check_password_hash(user.recovery_w2_hash, normalized_guesses[1])
 
@@ -319,10 +314,8 @@ def create_app() -> Flask:
         if len(new_password) < 8:
             return jsonify({"error": _t("recovery_err_min_length")}), 400
         
-        # --- اعتبارسنجی سخت‌گیرانه رمز عبور در بازیابی ---
         if not PASSWORD_REGEX.match(new_password):
             return jsonify({"error": _t("val_password_format")}), 400
-        # ---------------------------------------------
             
         user = User.query.get(session['recovery_user_id'])
         if user:
@@ -354,7 +347,6 @@ def create_app() -> Flask:
 
             login_user(user, remember=False)
 
-            # ریست کردن قفل بازیابی پس از ورود موفق با رمز عبور
             if user.recovery_attempts > 0:
                 user.recovery_attempts = 0
                 user.last_recovery_attempt = None

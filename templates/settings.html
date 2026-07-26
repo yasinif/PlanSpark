@@ -79,7 +79,6 @@
             >
               {{ subfield(class="toggle-radio") }}
               
-              <!-- سیستم ترجمه هوشمند بر اساس نوع دیتا -->
               {% if subfield.data == 'jalali' %}
                 {{ t.date_jalali }}
               {% elif subfield.data == 'gregorian' %}
@@ -109,7 +108,6 @@
             >
               {{ subfield(class="toggle-radio") }}
               
-              <!-- سیستم ترجمه هوشمند -->
               {% if subfield.data == 'text' %}
                 {{ t.date_style_text }}
               {% elif subfield.data == 'numeric' %}
@@ -246,15 +244,14 @@ function updateThemeButtons(isDark) {
   }
 }
 
-// وضعیت اولیه دکمه‌های تم هنگام باز کردن صفحه
 updateThemeButtons(document.body.classList.contains('dark'));
 
-// همگام‌سازی دکمه‌ها در صورت تغییر از جای دیگر
+
 window.addEventListener('themeChanged', function(e) {
   updateThemeButtons(e.detail.isDark);
 });
 
-// اعمال فوری تم با کلیک روی دکمه‌ها
+
 if (lightBtn && darkBtn) {
   lightBtn.addEventListener('click', function() { window.applyTheme(false); });
   darkBtn.addEventListener('click', function() { window.applyTheme(true); });
@@ -277,14 +274,14 @@ document.querySelectorAll('[data-form-id][data-priority-name]').forEach(function
     const tpl  = btn.getAttribute('data-confirm-tpl') || 'Delete "{name}"?';
     const msg  = tpl.replace('{name}', name);
     
-    // تشخیص خودکار زبان برای عنوان مودال
+    
     const titleText = document.documentElement.lang === 'fa' ? 'حذف اولویت' : 'Delete Priority';
 
-    // استفاده از مودال کاستوم مرکزی (با قابلیت फॉل‌بک به مرورگر در صورت خطا)
+    
     if (window.showCustomConfirm) {
       window.showCustomConfirm(titleText, msg, function() {
         document.getElementById(btn.getAttribute('data-form-id')).submit();
-      }, true); // کلمه true دکمه تایید را قرمز (حالت Danger) می‌کند
+      }, true); 
     } else {
       if (confirm(msg)) {
         document.getElementById(btn.getAttribute('data-form-id')).submit();

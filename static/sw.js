@@ -11,10 +11,8 @@
 // ---------------------------------------------------------------------
 // ⬛ CACHE CONFIGURATION: Versioned cache name and static asset list
 // ---------------------------------------------------------------------
-// نام کش را به v2 تغییر دادیم تا مرورگر آپدیت جدید را متوجه شود
 const CACHE_NAME = 'planspark-cache-v3'; 
 const ASSETS_TO_CACHE = [
-  // مسیر '/' را حذف کردیم تا صفحات داینامیک کش نشوند
   '/static/css/style.css',
   '/static/js/main.js',
   '/static/icons/192.png',
@@ -63,11 +61,9 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // اختیاری: فایل‌های استاتیک جدیدی که کاربر می‌بیند را به کش اضافه کن
         if (networkResponse && networkResponse.status === 200 && !event.request.url.includes('/api/')) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            // فقط فایل‌های استاتیک کش شوند، نه صفحات HTML
             if (event.request.mode !== 'navigate') {
                cache.put(event.request, responseClone);
             }
@@ -76,12 +72,9 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        // --- اگر اینترنت قطع بود ---
-        // ۱. اگر کاربر سعی کرد یک صفحه سایت (HTML) را باز کند، مستقیماً صفحه آفلاین را نشان بده
         if (event.request.mode === 'navigate') {
           return caches.match('/static/offline.html');
         }
-        // ۲. برای بقیه فایل‌ها (مثل CSS و عکس‌ها)، آن‌ها را از کش بخوان
         return caches.match(event.request);
       })
   );

@@ -9,11 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>آفلاین — Offline</title>
   <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/192.png" />
-  
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="/static/css/style.css" />
   
-  <!-- اجرای سریع تم و زبان برای جلوگیری از پرش استایل -->
   <script>
     if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
     
@@ -37,7 +35,6 @@
   </style>
 </head>
 <body class="lang-fa">
-  <!-- تنظیم کلاس اولیه بادی برای فونت و جهت -->
   <script>
     if (localStorage.getItem('offline_lang') === 'en') {
       document.body.classList.replace('lang-fa', 'lang-en');
@@ -58,7 +55,6 @@
       </div>
 
       <nav class="header-actions">
-        <!-- دکمه تغییر زبان آفلاین -->
         <button class="btn btn-outline btn-sm" id="langToggle">
           <span class="lang-fa-only">EN</span>
           <span class="lang-en-only">فا</span>
@@ -97,7 +93,6 @@
   <script>
     'use strict';
     
-    // منطق تغییر زبان و جهت در حالت آفلاین
     const langToggle = document.getElementById('langToggle');
     
     langToggle.addEventListener('click', () => {
@@ -105,11 +100,9 @@
       const body = document.body;
       const newLang = html.lang === 'fa' ? 'en' : 'fa';
       
-      // تغییر اتریبیوت‌های اصلی HTML
       html.lang = newLang;
       html.dir = newLang === 'fa' ? 'rtl' : 'ltr';
       
-      // تغییر کلاس‌های Body برای اعمال فونت و Flexbox از فایل style.css
       if (newLang === 'fa') {
         body.classList.remove('lang-en');
         body.classList.add('lang-fa');
@@ -118,7 +111,6 @@
         body.classList.add('lang-en');
       }
       
-      // ذخیره در حافظه کش مرورگر
       localStorage.setItem('offline_lang', newLang);
     });
   </script>

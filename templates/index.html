@@ -145,21 +145,17 @@
      ⬛ TASK LIST: Task cards with status badges, actions, and empty state
      --------------------------------------------------------------------- -->
 <div class="tasks-header">
-    <!-- بخش عنوان -->
     <h2 class="tasks-title">
       <img src="{{ url_for('static', filename='icons/task.svg') }}" class="app-icon" alt=""> {{ t.tasks_heading }}
       <span class="task-count badge" id="taskCountBadge">{{ tasks | length }}</span>
     </h2>
 
-<!-- باکس جستجوی جدید (همراه با آیکون و پشتیبانی دو زبانه) -->
-<!-- باکس جستجوی انیمیشنی -->
 <div class="search-box glass">
   <img src="{{ url_for('static', filename='icons/search.svg') }}" class="app-icon" alt="">
   <input type="text" id="taskLiveSearch" placeholder="{{ t.search_placeholder }}" class="search-input">
   <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;" aria-label="Clear">✕</button>
 </div>
 
-    <!-- دکمه جدید -->
     <button class="btn btn-primary" id="openCreateModalBtn" aria-haspopup="dialog" aria-controls="createTaskModal">
       <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="app-icon" alt=""> {{ t.btn_new_task }}
     </button>
@@ -187,13 +183,11 @@
           {% endfor %}
           <span class="task-priority-badge">{{ pdisp.label }}</span>
           {% endif %}
-          <!-- تاریخ انقضا -->
           <span class="task-meta-item" title="{{ t.label_expires_at }}">
             <img src="{{ url_for('static', filename='icons/calendar2.svg') }}" class="app-icon" alt=""> 
             <span dir="{{ 'rtl' if user_lang == 'fa' else 'ltr' }}">{{ utc_naive_to_jalali_str(task.expires_at, fmt=None, date_format=user_date_fmt, language=user_lang, date_style=user_date_style) }}</span>
           </span>
           
-          <!-- زمان تخمینی -->
           {% if task.estimated_time is not none %}
           <span class="task-meta-item" title="{{ t.label_estimated }}">
             <img src="{{ url_for('static', filename='icons/clock.svg') }}" class="app-icon" alt=""> {{
@@ -201,7 +195,6 @@
           </span>
           {% endif %}
           
-          <!-- تاریخ ایجاد (مخفی برای کلاینت اما موجود در کد) -->
           <span class="task-meta-item task-created" title="{{ t.label_created_at }}">
             <img src="{{ url_for('static', filename='icons/pin.svg') }}" class="app-icon" alt=""> 
             <span dir="{{ 'rtl' if user_lang == 'fa' else 'ltr' }}">{{ utc_naive_to_jalali_str(task.created_at, fmt=None, date_format=user_date_fmt, language=user_lang, date_style=user_date_style) }}</span>

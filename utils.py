@@ -131,7 +131,7 @@ def utc_naive_to_jalali_str(
     date_style: str = "text",
 ) -> str:
     """
-    تبدیل تاریخ دیتابیس به رشته نمایشی با پشتیبانی از استایل متنی/عددی.
+    Converts a database datetime to a display string with support for text/numeric styles.
     """
     if dt_utc_naive is None:
         return ""
@@ -139,7 +139,6 @@ def utc_naive_to_jalali_str(
     utc_aware: datetime = UTC_TZ.localize(dt_utc_naive)
     tehran_aware: datetime = utc_aware.astimezone(TEHRAN_TZ)
 
-    # اگر فرمت خاصی (مثل کارت ویرایش '%Y-%m-%d') درخواست شده، همان را اعمال کن
     if fmt:
         if date_format == "gregorian":
             result = tehran_aware.strftime(fmt)
@@ -148,7 +147,6 @@ def utc_naive_to_jalali_str(
             result = jalali_dt.strftime(fmt)
         return localize_digits(result, language)
 
-    # در غیر این صورت، فرمت هوشمند را بر اساس تنظیمات کاربر بساز
     time_str = f"{tehran_aware.hour:02d}:{tehran_aware.minute:02d}"
 
     if date_style == "numeric":

@@ -163,25 +163,24 @@ body {
    --------------------------------------------------------------------- */
 .site-header {
   position: sticky;
-  top: 15px; /* فاصله ایستایی از سقف هنگام اسکرول */
+  top: 15px;
   z-index: 100;
   background: var(--header-bg) !important;
-  border-radius: var(--radius) !important; /* لبه‌های کاملاً گرد مشابه کارت‌ها */
-  border: 1px solid var(--glass-border) !important; /* حاشیه شیشه‌ای دور تا دور */
+  border-radius: var(--radius) !important;
+  border: 1px solid var(--glass-border) !important;
   padding: 0 1.2rem;
   
-  /* تنظیمات شناور شدن در وسط صفحه */
+ 
   max-width: 1200px;
   margin: 15px auto; 
-  width: calc(100% - 2rem); /* ایجاد فاصله از چپ و راست در موبایل */
+  width: calc(100% - 2rem);
   
-  /* 🎯 اضافه شدن انیمیشن نرم برای ظاهر/مخفی شدن هدر */
+ 
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 🎯 کلاسی که هدر را به سمت بالا هل می‌دهد (توسط جاوااسکریپت اضافه می‌شود) */
 .site-header.header-hidden {
-  transform: translateY(calc(-100% - 30px)); /* مخفی شدن کامل هدر به سمت بالا */
+  transform: translateY(calc(-100% - 30px));
 }
 
 .header-inner {
@@ -260,7 +259,6 @@ body {
   gap: 0.35rem;
 }
 
-/* محدود کردن و هم‌اندازه کردن آیکون پروفایل با دکمه لاگ‌اوت */
 .user-greeting .app-icon {
   width: 1.15rem;
   height: 1.15rem;
@@ -287,13 +285,10 @@ body {
   margin: 0 auto;
   overflow: hidden;
   
-  /* 🎯 سایه ملایم برای تعلیق در فضا */
   box-shadow: 0 12px 35px rgba(30, 20, 50, 0.12), 0 4px 12px rgba(30, 20, 50, 0.05);
-  /* 🎯 جادوی اصلی اپل: یک خط ۱ پیکسلیِ خاکستری/مشکی با شفافیت پایین برای تم لایت */
   border: 1px solid rgba(0, 0, 0, 0.26) !important;
 }
 
-/* 🎯 تنظیم همان خط برای تم تاریک (تبدیل به خط سفید نیمه‌شفاف) */
 body.dark .bottom-nav {
   box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6), 0 5px 15px rgba(0, 0, 0, 0.4) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -338,7 +333,7 @@ body.lang-en .bottom-nav-item {
   font-weight: 500;
   transition: var(--transition);
   padding: 0.4rem 0.5rem;
-  border-radius: 12px; /* 🎯 گرد شدن بک‌گراند آیتم‌ها (هاور و اکتیو) */
+  border-radius: 12px;
   position: relative;
 }
 
@@ -378,7 +373,6 @@ body.lang-en .bottom-nav-item {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  /* پدینگ بالا (مقدار اول) از 1.5rem به 0.75rem کاهش یافت (نصف شد) */
   padding: 0.75rem 1.5rem calc(var(--bnav-height) + 1.5rem); 
 }
 
@@ -429,7 +423,6 @@ body.lang-en .bottom-nav-item {
   transform: translateY(-1px);
 }
 
-/* دکمه اصلی و فعال Mark Done برای تسک‌های پندینگ */
 .btn-done {
   background: linear-gradient(135deg, #10b981, #059669);
   color: #fff;
@@ -441,13 +434,10 @@ body.lang-en .bottom-nav-item {
   box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
 }
 
-/* فقط بجِ تسک‌هایی که انجام شده‌اند و غیرفعال هستند بی‌رنگ شود */
 .btn-done.btn-disabled {
   background: transparent;
   border: 2.5px solid #10b981;
-  /* بوردر سبز با ضخامت ۲.۵ */
   color: revert;
-  /* متن هوشمند و سازگار با تم */
   box-shadow: none;
   transform: none;
 }
@@ -455,9 +445,7 @@ body.lang-en .bottom-nav-item {
 .btn-expired {
   background: transparent;
   border: 2.5px solid #ef4444;
-  /* بوردر قرمز با ضخامت ۲.۵ */
   color: revert;
-  /* متن هوشمند و سازگار با تم */
   box-shadow: none;
 }
 
@@ -471,13 +459,10 @@ body.lang-en .bottom-nav-item {
   transform: translateY(-1px);
 }
 
-/* فقط دکمه‌ی ادیت در حالت غیرفعال (تسک‌های انجام‌شده و اکسپایر) شفّاف با بوردر نارنجی شود */
 .btn-edit.btn-disabled {
   background: transparent;
   border: 2.5px solid #f59e0b;
-  /* بوردر نارنجی با ضخامت ۲.۵ */
   color: revert;
-  /* متن هوشمند و سازگار با تم */
   box-shadow: none;
   transform: none;
 }
@@ -884,15 +869,14 @@ textarea.form-control {
 }
 
 .tasks-title {
-  font-size: 1.5rem; /* دقیقاً هم‌اندازه با page-title */
-  font-weight: 800;  /* دقیقاً هم‌وزن با page-title */
+  font-size: 1.5rem;
+  font-weight: 800;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.55rem;
 }
 
-/* بزرگ‌تر کردن بج عدد متناسب با سایز جدید تایتل */
 .tasks-title .badge {
   font-size: 0.95rem;
   padding: 0.2rem 0.75rem;
@@ -933,7 +917,6 @@ textarea.form-control {
   z-index: 1;
   /* below .filter-section (z-index: 10) */
 
-  /* 🚀 اضافه شدن شتاب‌دهنده سخت‌افزاری برای روان شدن اسکرول کارت‌های شیشه‌ای */
   will-change: transform, box-shadow;
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -1003,10 +986,8 @@ textarea.form-control {
   flex: 1;
   min-width: 0;
   
-  /* 🎯 تبدیل به کانتینر فلکس برای مدیریت هوشمند فاصله‌ها */
   display: flex;
   flex-direction: column;
-  /* 🎯 رزرو فضای خالی (حدوداً به اندازه تایتل + دو خط توضیحات) */
   min-height: 6rem; 
 }
 
@@ -1031,8 +1012,6 @@ textarea.form-control {
   flex-wrap: wrap;
   gap: 0.55rem;
   align-items: center;
-  
-  /* 🎯 جادوی اصلی: تاریخ و اولویت همیشه به پایین‌ترین قسمت ممکن هل داده می‌شوند */
   margin-top: auto; 
 }
 
@@ -1167,7 +1146,7 @@ textarea.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem; /* اضافه شدن فضای تنفس دور مودال */
+  padding: 1.5rem;
   animation: fadeIn 0.2s ease;
 }
 
@@ -1177,7 +1156,7 @@ textarea.form-control {
   max-height: 90vh;   
   overflow-y: auto;
   padding: 0;
-  border-radius: var(--radius); /* اطمینان از حفظ ظاهر شیشه‌ای و گرد */
+  border-radius: var(--radius);
   animation: modalSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1197,7 +1176,7 @@ textarea.form-control {
   max-height: 90vh;   
   overflow-y: auto;
   padding: 0;
-  border-radius: var(--radius); /* اطمینان از حفظ ظاهر شیشه‌ای و گرد */
+  border-radius: var(--radius);
   animation: modalSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1597,10 +1576,9 @@ body.dark .modal-info-msg {
 .settings-section {
   max-width: 680px;
   margin: 0 auto;
-  display: block; /* غیرفعال کردن فلکس‌باکس برای جلوگیری از ایجاد فاصله مضاعف */
+  display: block;
 }
 
-/* افزودن حاشیه پایینی به کارت‌ها برای حفظ فاصله بین باکس اول و دوم تنظیمات */
 .settings-section .settings-card {
   margin-bottom: 1.25rem; 
 }
@@ -1637,22 +1615,20 @@ body.dark .modal-info-msg {
   text-align: start;
 }
 
-/* کانتینر اصلی دکمه‌ها - اینجا تعیین می‌کند دکمه‌ها کنار هم باشند */
 .toggle-group {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly; /* 🎯 جادوی تعادل: فضای مساوی در چپ، راست و وسط */
+  justify-content: space-evenly;
   align-items: center;
   width: 100%;
   margin-bottom: 1.25rem;
 }
 
-/* استایل خود دکمه‌ها */
 .toggle-option {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 42%; /* 🎯 سایز ایده‌آل: نه خیلی بزرگ نه خیلی کوچک */
+  width: 42%;
   padding: 0.55rem 0.5rem;
   border: 1.5px solid var(--input-border);
   border-radius: 30px;
@@ -1780,7 +1756,6 @@ body.dark .modal-info-msg {
   gap: 0.55rem;
 }
 
-/* بزرگ‌تر کردن اختصاصی آیکون‌ها در عناوین اصلی صفحات و بخش‌ها */
 .page-title .app-icon,
 .tasks-title .app-icon {
   width: 1.85rem;
@@ -1833,7 +1808,7 @@ body.dark .modal-info-msg {
 }
 
 .chart-empty-state canvas {
-  max-width: 140px; /* همگام‌سازی با ابعاد HTML */
+  max-width: 140px;
   max-height: 140px;
 }
 
@@ -1990,7 +1965,6 @@ body.dark .modal-info-msg {
 
 @media (max-width: 480px) {
 
-  /* تنظیم باکس اصلی هدر برای تعادل فضا در موبایل */
   .header-inner {
     display: flex;
     flex-wrap: wrap;
@@ -2001,15 +1975,12 @@ body.dark .modal-info-msg {
     gap: 0.3rem;
   }
 
-  /* جمع‌وجور کردن بخش دکمه‌ها و آیکون‌های سمت راست هدر */
   .header-actions {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    /* کاهش فاصله بین دکمه‌ها برای جلوگیری از شلوغی در تصویر 11.jpg */
   }
 
-  /* بهینه‌سازی اندازه دکمه‌های ناوبری روی گوشی */
   .header-actions .btn-sm {
     padding: 0.35rem 0.65rem;
     font-size: 0.8rem;
@@ -2019,7 +1990,6 @@ body.dark .modal-info-msg {
     font-size: 0.85rem;
   }
 
-  /* شیک و مرکزچین کردن ساعت در ردیف دوم (حل مشکل اصلی تصاویر 11.jpg و 22.jpg) */
   .live-clock {
     position: static;
     transform: none;
@@ -2027,13 +1997,12 @@ body.dark .modal-info-msg {
     flex: 0 0 100%;
     text-align: center;
     font-size: 0.78rem;
-    color: var(--text-secondary); /* ✅ استفاده از متغیر هوشمند تم */
+    color: var(--text-secondary);
     margin-top: 0.4rem;
     padding-top: 0.4rem;
-    border-top: 1px solid var(--border); /* ✅ استفاده از متغیر خط هماهنگ با تم */
+    border-top: 1px solid var(--border);
   }
 
-  /* بقیه کدهای مدیا کوئری شما بدون تغییر زیر این بخش می‌مانند */
   .task-card {
     flex-direction: column;
   }
@@ -2045,13 +2014,11 @@ body.dark .modal-info-msg {
     gap: 0.4rem;
   }
 
-  /* 🎯 جادوی اصلی: فرم‌ها و دکمه‌ها فضا را کاملاً مساوی (1 قسمت از 3 قسمت) بین خود تقسیم کنند */
   .task-actions > * {
     flex: 1;
-    min-width: 0; /* جلوگیری از بیرون‌زدگی فرم‌ها */
+    min-width: 0;
   }
 
-  /* 🎯 دکمه‌ها ۱۰۰٪ عرض ظرفِ خود (فرم) را پر کنند */
   .task-actions .btn {
     width: 100% !important;
     padding: 0.45rem 0.1rem;
@@ -2084,7 +2051,6 @@ body.dark .modal-info-msg {
     font-size: 1.5rem;
   }
 
-  /* تنظیمات چیدمان هدر تسک‌ها در موبایل */
   .tasks-header {
     display: flex;
     flex-wrap: wrap;
@@ -2092,22 +2058,19 @@ body.dark .modal-info-msg {
     align-items: center;
   }
   
-  /* عنوان در بالا و سمت راست */
   .tasks-header .tasks-title {
     order: 1;
   }
   
-  /* دکمه در بالا و سمت چپ */
   .tasks-header #openCreateModalBtn {
     order: 2;
   }
   
-  /* باکس جستجو در ردیف دوم با عرض کامل */
   .tasks-header .search-box {
     order: 3;
     max-width: 100% !important; 
     flex: 1 1 100%;
-    margin: 1rem 0 0 0 !important; /* فاصله گرفتن از دکمه و عنوان */
+    margin: 1rem 0 0 0 !important;
   }
 
   --bnav-height: 54px;
@@ -2131,7 +2094,6 @@ body.dark .modal-info-msg {
     justify-content: center;
   }
 
-  /* 🎯 شناور کردن بج وضعیت در موبایل */
   .task-status-badge {
     position: absolute;
     top: 1rem;
@@ -2142,26 +2104,23 @@ body.dark .modal-info-msg {
     font-size: 0.95rem;
   }
 
-  /* 🎯 لغو فضای امن از کل بدنه تا نوار پایینی فضا داشته باشد */
   .task-body {
     padding-inline-end: 0 !important; 
   }
 
-  /* 🎯 ایجاد فضای امن اختصاصی فقط برای متن‌ها تا زیر دایره نروند */
   .task-title,
   .task-description {
     padding-inline-end: 3.5rem;
   }
   
-  /* 🎯 چیدمان هوشمند و سیال (اگر جا شد در یک خط، اگر نشد با فاصله زیبا در خط بعد) */
   .task-meta {
     display: flex;
-    flex-wrap: wrap; /* جادوی هوشمندی: اجازه شکستن به خط بعد */
-    gap: 0.45rem;    /* این فاصله هم بین آیتم‌هاست و هم بین خطوط بالا و پایین */
+    flex-wrap: wrap;
+    gap: 0.45rem;
   }
 
   .task-meta-item {
-    font-size: 0.77rem; /* سایز درشت و خوانا */
+    font-size: 0.77rem;
   }
 
   .task-priority-badge {
@@ -2212,15 +2171,7 @@ body.dark .modal-info-msg {
   animation: pulse 2.5s ease-in-out infinite;
 }
 
-/* استایل عمومی برای تمام آیکون‌های جدید SVG */
-/*.app-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    display: inline-block;
-    vertical-align: middle;
-}*/
 
-/* سفید کردن یکجای تمام آیکون‌های جدید در حالت دارک‌مود */
 body.dark .btn-icon-svg,
 body.dark .app-icon {
   filter: brightness(0) invert(1) !important;
@@ -2237,7 +2188,6 @@ body.dark .app-icon {
   filter: brightness(0) saturate(100%) invert(40%) sepia(84%) saturate(5947%) hue-rotate(345deg) !important;
 }
 
-/* مخفی کردن تاریخ ایجاد تسک از دید کاربر و حفظ آن در کدهای ساختاری */
 .task-created {
     display: none !important;
 }
@@ -2247,13 +2197,12 @@ body.dark .app-icon {
    ⬛ LIVE SEARCH: Card-style hover and focus search input
    --------------------------------------------------------------------- */
 
-/* ۱. حالت پیش‌فرض (سایز ثابت و سایه عادی مثل کارت‌ها) */
 .search-box {
   display: flex;
   align-items: center;
   flex: 1;
   margin: 0 1rem;
-  max-width: 230px; /* یک عرض ثابت و متناسب */
+  max-width: 230px;
   padding: 0.45rem 0.8rem;
   border-radius: 50px;
   
@@ -2261,13 +2210,12 @@ body.dark .app-icon {
   border: 1px solid var(--glass-border);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
-  box-shadow: var(--shadow); /* سایه عادی مثل کارت‌ها */
+  box-shadow: var(--shadow);
   
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, box-shadow; /* برای روانی انیمیشن در مرورگر */
+  will-change: transform, box-shadow;
 }
 
-/* استایل متون داخل باکس */
 .search-input {
   width: 100%;
   border: none;
@@ -2284,8 +2232,7 @@ body.dark .app-icon {
   opacity: 0.7;
 }
 
-/* دکمه ضربدر برای پاک کردن جستجو */
-/* دکمه ضربدر برای پاک کردن جستجو */
+
 .clear-search-btn {
   background: none;
   border: none;
@@ -2299,28 +2246,24 @@ body.dark .app-icon {
   justify-content: center;
 }
 
-/* قرمز شدن ضربدر هنگام رفتن موس روی آن */
 .clear-search-btn:hover {
   color: var(--color-expired); 
 }
 
-/* قرمز شدن ضربدر هنگام رفتن موس روی آن */
 .clear-search-btn:hover {
   color: var(--color-expired);
 }
 
-/* ۲. رفتار هاور (وقتی موس روی آن می‌رود - دقیقاً مثل کارت‌های تسک) */
 .search-box:hover {
-  transform: translateY(-2px); /* کمی بالا آمدن */
-  box-shadow: var(--shadow-lg); /* سایه عمیق‌تر و پخش‌تر */
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* ۳. رفتار کلیک/تایپ (وقتی روی آن کلیک می‌شود) */
 .search-box:focus-within {
-  transform: translateY(-2px) scale(1.03); /* کمی بالا آمدن + یک ذره بزرگ‌نمایی به سمت کاربر */
-  border-color: var(--accent); /* رنگی شدن حاشیه با رنگ اصلی تم */
-  background: var(--input-bg); /* کمی واضح‌تر شدن بک‌گراند */
-  box-shadow: 0 12px 25px rgba(124, 58, 237, 0.2); /* یک سایه رنگی ملایم و جذاب */
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--accent);
+  background: var(--input-bg);
+  box-shadow: 0 12px 25px rgba(124, 58, 237, 0.2);
 }
 
 
@@ -2333,12 +2276,10 @@ body.dark .app-icon {
   width: 100%;
 }
 
-/* پنهان کردن سلکت خشک و اصلی مرورگر */
 .custom-select-wrapper select {
   display: none !important;
 }
 
-/* دکمه‌ای که به کاربر نمایش داده می‌شود */
 .custom-select-trigger {
   display: flex;
   justify-content: space-between;
@@ -2352,26 +2293,23 @@ body.dark .app-icon {
   cursor: pointer;
   transition: var(--transition);
   user-select: none;
-  min-width: 110px; /* جلوگیری از بهم ریختگی عرض */
+  min-width: 110px;
 }
 
-/* یکسان‌سازی قطعی و میلی‌متری تمام فیلدهای مُدال (اولویت، زمان و تاریخ) */
 .form-group .custom-select-trigger,
 .form-group .picker-box {
-  height: 44px;           /* تعیین یک ارتفاع دقیق و ثابت برای جلوگیری از نوسان */
-  padding: 0 0.85rem;     /* حذف پدینگ بالا و پایین (محتوا توسط flex وسط‌چین می‌شود) */
+  height: 44px;         
+  padding: 0 0.85rem;   
   font-size: 0.87rem;      
   border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
-/* افکت هنگام کلیک روی دکمه */
 .custom-select-wrapper.open .custom-select-trigger {
   border-color: var(--input-focus);
   box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.12);
 }
 
-/* فلش نرم و انیمیشنی کنار دراپ‌داون */
 .custom-select-trigger::after {
   content: '▼';
   font-size: 0.6rem;
@@ -2383,35 +2321,25 @@ body.dark .app-icon {
   transform: rotate(180deg);
 }
 
-/* منوی بازشو (انیمیشن باز شدن و افکت شیشه) */
-/* --- منوی بازشو با پس‌زمینه کاملاً توپر (بدون شفافیت) --- */
 .custom-select-options {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
   min-width: 100%;
-  
-  /* 🔴 رنگ توپر سفید برای تم روشن (بدون هیچ شفافیتی) */
   background: #ffffff; 
-  
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-lg);
   z-index: 9999;
-  
-  /* برگرداندن overflow برای حفظ گردی لبه‌ها در حالت Hover */
   overflow: hidden; 
-  
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 🟢 رنگ پس‌زمینه توپر برای حالت تاریک (Dark Mode) */
 body.dark .custom-select-options {
   background: #1a0a2e; 
   border-color: rgba(120, 90, 180, 0.4);
@@ -2423,7 +2351,6 @@ body.dark .custom-select-options {
   transform: translateY(0);
 }
 
-/* تک‌تک گزینه‌های داخل منو */
 .custom-select-option {
   padding: 0.6rem 0.8rem;
   font-size: 0.83rem;
@@ -2432,13 +2359,11 @@ body.dark .custom-select-options {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* جایگزینِ رنگ آبیِ خشک سیستم‌عامل با رنگ تم سایت */
 .custom-select-option:hover {
   background: var(--accent-light);
   color: var(--accent);
 }
 
-/* استایل گزینه‌ای که در حال حاضر انتخاب شده است */
 .custom-select-option.selected {
   background: linear-gradient(135deg, var(--accent), var(--accent-hover));
   color: #fff;
@@ -2450,45 +2375,38 @@ body.dark .custom-select-options {
    ⬛ Z-INDEX STACKING FIXES: Prevent menu overlap with navigation
    --------------------------------------------------------------------- */
 
-/* 1. منوها و تقویم در صفحه آنالیز رو به بالا باز شوند */
 .analytics-filter-form .custom-select-options,
 .analytics-filter-form .filter-cal {
   top: auto;
   bottom: calc(100% + 6px);
 }
 
-/* 2. اصلاح جهت انیمیشن منو برای حالت رو به بالا */
 .analytics-filter-form .custom-select-options {
   transform: translateY(10px);
 }
 
-/* 3. محدود کردن ارتفاع تمام منوها و فعال‌سازی اسکرول (برای منوهای طولانی) */
 .custom-select-options {
   max-height: 180px; 
   overflow-y: auto;  
 }
 
-/* زیباتر و واضح‌تر کردن نوار اسکرول داخلی منوها */
 .custom-select-options::-webkit-scrollbar {
-  width: 8px; /* پهنای اسکرول‌بار بیشتر شد تا راحت‌تر دیده شود */
+  width: 8px;
 }
 
-/* پس‌زمینه مسیر اسکرول (Track) */
 .custom-select-options::-webkit-scrollbar-track {
-  background: var(--input-bg); /* رنگ پس‌زمینه ملایم برای مشخص شدن مسیر */
+  background: var(--input-bg);
   border-radius: 8px;
 }
 
-/* اهرم اسکرول (Thumb) */
 .custom-select-options::-webkit-scrollbar-thumb {
-  background: var(--text-muted); /* رنگ پررنگ‌تر برای دیده شدن بهتر اهرم */
+  background: var(--text-muted);
   border-radius: 8px;
-  border: 2px solid var(--input-bg); /* حاشیه برای ایجاد فاصله با لبه‌ها */
+  border: 2px solid var(--input-bg);
 }
 
-/* تغییر رنگ اهرم هنگام رفتن موس روی آن */
 .custom-select-options::-webkit-scrollbar-thumb:hover {
-  background: var(--accent); /* تغییر به رنگ اصلی تم (بنفش) موقع هاور */
+  background: var(--accent);
 }
 
 
@@ -2552,45 +2470,38 @@ body.lang-en .forgot-password-link {
    ⬛ AUTH & RECOVERY MODALS: Shared modal overlay styles
    --------------------------------------------------------------------- */
 
-/* دکمه‌های تایید فرم لاگین و تغییر رمز */
 .auth-submit-btn {
   margin-top: 1.5rem;
 }
 
-/* بدنه اصلی مودال بازیابی */
 .recovery-modal-body {
   padding: 1.5rem;
 }
 
-/* متن راهنمای وارد کردن ۵ تسک */
 .recovery-instruction {
   text-align: center;
   margin-bottom: 1rem;
   color: var(--text-primary);
 }
 
-/* فاصله بین فیلد رمز جدید و تکرار آن */
 .recovery-confirm-group {
   margin-top: 0.8rem;
 }
 
-/* دکمه‌های پایینی بخش ورود ۵ تسک (تایید و انصراف) */
 .recovery-footer-actions {
   margin-top: 1.5rem;
   display: flex;
   gap: 0.5rem;
 }
 
-/* هم‌عرض کردن دکمه‌های مودال بازیابی */
 .recovery-footer-actions .btn {
   flex: 1;
   justify-content: center;
 }
 
-/* تنظیمات اختصاصی باکس تم در صفحه تنظیمات */
 .theme-settings-group {
-  margin-top: 1.25rem; /* حل مشکل چسبیدن دکمه‌ها به تایتل */
-  margin-bottom: 0;    /* صفر کردن حاشیه پایین چون دکمه ذخیره ندارد */
+  margin-top: 1.25rem;
+  margin-bottom: 0;
 }
 
 .theme-btn-icon {
@@ -2609,18 +2520,13 @@ body.lang-en .forgot-password-link {
   left: 50%;
   transform: translate(-50%, -50%) scale(0.95);
   z-index: 9999;
-  
-  /* تنظیمات شیشه‌ای دقیقاً مشابه هدر با ماتی بیشتر */
   background: var(--header-bg) !important;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
-  
-  /* این خط یک سایه می‌سازد که کل فضای پشت بنر را کمی تاریک می‌کند */
   box-shadow: var(--shadow-lg), 0 0 0 100vw rgba(0, 0, 0, 0.4);
   border-radius: var(--radius);
   padding: 1.8rem 1.5rem;
-  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2628,14 +2534,11 @@ body.lang-en .forgot-password-link {
   width: 90%;
   max-width: 360px;
   text-align: center;
-  
-  /* مخفی بودن پیش‌فرض برای انیمیشن */
   opacity: 0;
   visibility: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* کلاسی که با جاوااسکریپت اضافه می‌شود تا بنر ظاهر شود */
 .pwa-install-banner.show {
   opacity: 1;
   visibility: visible;

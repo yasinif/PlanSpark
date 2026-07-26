@@ -1,0 +1,2691 @@
+/* =====================================================================
+   FILE: static/css/style.css
+   PURPOSE: Master stylesheet for the TaskMen application. Contains the complete design system including CSS custom properties, glassmorphism theming (dark/light), RTL/LTR support, all component styles, and responsive breakpoints.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   ⬛ IMPORTS & FONT RESET: Offline web font face declarations
+   --------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../fonts/Vazirmatn-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ TYPOGRAPHY: Dual-font system for Persian and Latin scripts
+   --------------------------------------------------------------------- */
+:root {
+  --font-fa: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+  --font-en: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+}
+
+/* Persian layout */
+body.lang-fa {
+  font-family: var(--font-fa);
+  direction: rtl;
+}
+
+/* English layout */
+body.lang-en {
+  font-family: var(--font-en);
+  direction: ltr;
+}
+
+/* Fallback when no lang class */
+body {
+  font-family: var(--font-fa);
+  direction: rtl;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ DESIGN TOKENS (LIGHT MODE): CSS custom properties for light theme
+   --------------------------------------------------------------------- */
+:root {
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --blur: blur(18px);
+  --radius: 18px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(80, 60, 120, 0.12);
+  --shadow-lg: 0 20px 60px rgba(80, 60, 120, 0.18);
+
+  /* Background gradient */
+  --bg-gradient: linear-gradient(135deg, #e8d5f5 0%, #c8e6fb 40%, #d4f0e8 100%);
+
+  /* Surface & text */
+  --surface: rgba(255, 255, 255, 0.85);
+  --text-primary: #1a1035;
+  --text-secondary: #5a4a7a;
+  --text-muted: #8a7aaa;
+  --border: rgba(180, 160, 220, 0.3);
+
+  /* Brand / accent */
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-light: rgba(124, 58, 237, 0.12);
+
+  /* Status colors */
+  --color-pending: #0ea5e9;
+  --color-done: #10b981;
+  --color-expired: #ef4444;
+
+  /* UI elements */
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-border: rgba(180, 160, 220, 0.4);
+  --input-focus: #7c3aed;
+  --btn-text: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.65);
+
+  /* Bottom nav height — used for padding-bottom on main content */
+  --bnav-height: 64px;
+
+  /* Transitions */
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ DESIGN TOKENS (DARK MODE): CSS custom properties for dark theme
+   --------------------------------------------------------------------- */
+body.dark {
+  --glass-bg: rgba(15, 10, 30, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --bg-gradient: linear-gradient(135deg, #0f0a1e 0%, #1a0a2e 40%, #0a1628 100%);
+  --surface: rgba(25, 15, 50, 0.85);
+  --text-primary: #f0e8ff;
+  --text-secondary: #c4b0e8;
+  --text-muted: #7a6aaa;
+  --border: rgba(120, 90, 180, 0.25);
+  --accent: #a855f7;
+  --accent-hover: #9333ea;
+  --accent-light: rgba(168, 85, 247, 0.15);
+  --input-bg: rgba(30, 20, 60, 0.9);
+  --input-border: rgba(120, 90, 180, 0.35);
+  --input-focus: #a855f7;
+  --header-bg: rgba(10, 5, 25, 0.8);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ BASE BODY: Background and global body styles
+   --------------------------------------------------------------------- */
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ GLASSMORPHISM UTILITY: Shared glass-effect mixin class
+   --------------------------------------------------------------------- */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ SITE HEADER: Compact header with navigation and controls
+   --------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 15px; /* فاصله ایستایی از سقف هنگام اسکرول */
+  z-index: 100;
+  background: var(--header-bg) !important;
+  border-radius: var(--radius) !important; /* لبه‌های کاملاً گرد مشابه کارت‌ها */
+  border: 1px solid var(--glass-border) !important; /* حاشیه شیشه‌ای دور تا دور */
+  padding: 0 1.2rem;
+  
+  /* تنظیمات شناور شدن در وسط صفحه */
+  max-width: 1200px;
+  margin: 15px auto; 
+  width: calc(100% - 2rem); /* ایجاد فاصله از چپ و راست در موبایل */
+  
+  /* 🎯 اضافه شدن انیمیشن نرم برای ظاهر/مخفی شدن هدر */
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 🎯 کلاسی که هدر را به سمت بالا هل می‌دهد (توسط جاوااسکریپت اضافه می‌شود) */
+.site-header.header-hidden {
+  transform: translateY(calc(-100% - 30px)); /* مخفی شدن کامل هدر به سمت بالا */
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  /* Reduced height — was 64px, now 46px */
+  height: 46px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 800;
+  /* Slightly smaller title font */
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.brand:hover {
+  opacity: 0.8;
+  transform: scale(1.02);
+}
+
+.brand-icon {
+  font-size: 1.15rem;
+}
+
+.live-clock {
+  flex: 1;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.header-actions .btn-sm {
+  min-width: 85px;
+  justify-content: center;
+}
+
+.header-actions .lang-toggle {
+  min-width: 30px;
+  padding: 0.4rem 0.6rem;
+}
+
+.user-greeting {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 0 0.2rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* محدود کردن و هم‌اندازه کردن آیکون پروفایل با دکمه لاگ‌اوت */
+.user-greeting .app-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ BOTTOM NAVIGATION: Fixed mobile nav bar with glass effect
+   --------------------------------------------------------------------- */
+.bottom-nav {
+  position: fixed;
+  bottom: 15px;
+  left: 1rem;
+  right: 1rem;
+  z-index: 90;
+  height: var(--bnav-height);
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-radius: var(--radius) !important;
+  max-width: 450px;
+  margin: 0 auto;
+  overflow: hidden;
+  
+  /* 🎯 سایه ملایم برای تعلیق در فضا */
+  box-shadow: 0 12px 35px rgba(30, 20, 50, 0.12), 0 4px 12px rgba(30, 20, 50, 0.05);
+  /* 🎯 جادوی اصلی اپل: یک خط ۱ پیکسلیِ خاکستری/مشکی با شفافیت پایین برای تم لایت */
+  border: 1px solid rgba(0, 0, 0, 0.26) !important;
+}
+
+/* 🎯 تنظیم همان خط برای تم تاریک (تبدیل به خط سفید نیمه‌شفاف) */
+body.dark .bottom-nav {
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6), 0 5px 15px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* RTL: analytical ordering.
+   In RTL dir, flex items flow right-to-left.
+   We want visual order L→R: آنالیز | خانه | تنظیمات
+   In RTL flex this means DOM order آنالیز (right) | خانه (center) | تنظیمات (left).
+   We override with `order` to pin them visually correctly regardless of dir. */
+.bottom-nav-item:nth-child(1) {
+  order: 3;
+}
+
+/* آنالیز → visual left  */
+.bottom-nav-item:nth-child(2) {
+  order: 2;
+}
+
+/* خانه  → visual center */
+.bottom-nav-item:nth-child(3) {
+  order: 1;
+}
+
+/* تنظیمات → visual right */
+
+/* For LTR layout, reset order to DOM order */
+body.lang-en .bottom-nav-item {
+  order: unset;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: var(--transition);
+  padding: 0.4rem 0.5rem;
+  border-radius: 12px; /* 🎯 گرد شدن بک‌گراند آیتم‌ها (هاور و اکتیو) */
+  position: relative;
+}
+
+.bottom-nav-item:hover {
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.bottom-nav-item.active {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.bottom-nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  border-radius: 0 0 3px 3px;
+}
+
+.bnav-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.bnav-label {
+  font-size: 0.72rem;
+}
+
+/* Main content: add bottom padding equal to nav height */
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  /* پدینگ بالا (مقدار اول) از 1.5rem به 0.75rem کاهش یافت (نصف شد) */
+  padding: 0.75rem 1.5rem calc(var(--bnav-height) + 1.5rem); 
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ BUTTONS: Primary, outline, danger, and icon button variants
+   --------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1.2rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: var(--btn-text);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+
+.btn-outline:hover {
+  background: var(--accent-light);
+  transform: translateY(-1px);
+}
+
+/* دکمه اصلی و فعال Mark Done برای تسک‌های پندینگ */
+.btn-done {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+}
+
+.btn-done:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+/* فقط بجِ تسک‌هایی که انجام شده‌اند و غیرفعال هستند بی‌رنگ شود */
+.btn-done.btn-disabled {
+  background: transparent;
+  border: 2.5px solid #10b981;
+  /* بوردر سبز با ضخامت ۲.۵ */
+  color: revert;
+  /* متن هوشمند و سازگار با تم */
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-expired {
+  background: transparent;
+  border: 2.5px solid #ef4444;
+  /* بوردر قرمز با ضخامت ۲.۵ */
+  color: revert;
+  /* متن هوشمند و سازگار با تم */
+  box-shadow: none;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+}
+
+.btn-edit:hover {
+  transform: translateY(-1px);
+}
+
+/* فقط دکمه‌ی ادیت در حالت غیرفعال (تسک‌های انجام‌شده و اکسپایر) شفّاف با بوردر نارنجی شود */
+.btn-edit.btn-disabled {
+  background: transparent;
+  border: 2.5px solid #f59e0b;
+  /* بوردر نارنجی با ضخامت ۲.۵ */
+  color: revert;
+  /* متن هوشمند و سازگار با تم */
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete:hover {
+  transform: translateY(-1px);
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+}
+
+.btn-xs {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.77rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.15rem;
+  padding: 0.3rem;
+  border-radius: 8px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+
+.btn-icon:hover {
+  background: var(--accent-light);
+  transform: scale(1.15);
+}
+
+.btn-icon.active {
+  background: var(--accent-light);
+}
+
+html[dir="rtl"] .btn-logout .btn-icon-svg {
+    transform: scaleX(-1);
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ TOAST NOTIFICATIONS: Flash message styling and animations
+   --------------------------------------------------------------------- */
+.flash-toast-container {
+  position: fixed;
+  top: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 90%;
+  max-width: 400px;
+  pointer-events: none; 
+}
+
+.flash-toast {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: toastSlideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-inline-start: 4.5px solid transparent; 
+}
+
+body.dark .flash-toast {
+  background: rgba(30, 25, 45, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.toast-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text-muted);
+  padding: 0 0.5rem;
+  margin-inline-start: auto;
+  transition: color 0.2s ease;
+}
+
+.toast-close:hover {
+  color: var(--color-expired);
+}
+
+.flash-success { border-inline-start-color: #10b981; }
+.flash-danger, .flash-error { border-inline-start-color: #ef4444; }
+.flash-warning { border-inline-start-color: #f59e0b; }
+.flash-info { border-inline-start-color: #0ea5e9; }
+
+.flash-toast.fade-out {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@keyframes toastSlideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ AUTHENTICATION PAGES: Login and registration card layouts
+   --------------------------------------------------------------------- */
+.auth-page {
+  min-height: calc(25vh - 11px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 2.5rem 2rem;
+  animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-logo-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.auth-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.3rem;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.auth-switch a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ FORMS & INPUTS: Text fields, selects, textareas, and labels
+   --------------------------------------------------------------------- */
+.form-group {
+  margin-bottom: 0.2rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.2rem; 
+}
+
+.required {
+  color: var(--color-expired);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  transition: var(--transition);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-control:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.form-control-error {
+  border-color: var(--color-expired) !important;
+}
+
+.form-control-readonly {
+  background: var(--border) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.77rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.field-errors {
+  list-style: none;
+  margin-top: 0.35rem;
+}
+
+.field-errors li {
+  font-size: 0.8rem;
+  color: var(--color-expired);
+  padding: 0.2rem 0;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .form-control {
+  padding-left: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.2rem;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--accent);
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ FILTER BOX: Task filter panel with status and date controls
+   --------------------------------------------------------------------- */
+.filter-section {
+  margin-bottom: 1.25rem;
+  position: relative;
+  /* establish stacking context */
+  z-index: 10;
+  /* above task cards (z-index: 1) so the calendar floats on top */
+}
+
+.filter-box {
+  padding: 1rem 1.25rem;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.filter-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.filter-select,
+.filter-input {
+  padding: 0.42rem 0.7rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.83rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.12);
+}
+
+.filter-select-sm,
+.filter-input-sm {
+  padding: 0.33rem 0.58rem;
+  font-size: 0.8rem;
+}
+
+.filter-actions {
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.filter-error {
+  margin-top: 0.65rem;
+  color: var(--color-expired);
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ TASKS SECTION: Task list header, count badge, and layout
+   --------------------------------------------------------------------- */
+.tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.tasks-title {
+  font-size: 1.5rem; /* دقیقاً هم‌اندازه با page-title */
+  font-weight: 800;  /* دقیقاً هم‌وزن با page-title */
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+/* بزرگ‌تر کردن بج عدد متناسب با سایز جدید تایتل */
+.tasks-title .badge {
+  font-size: 0.95rem;
+  padding: 0.2rem 0.75rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+}
+
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ TASK CARDS: Individual task card component and status badges
+   --------------------------------------------------------------------- */
+.task-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem 1.2rem;
+  transition: var(--transition);
+  animation: fadeUp 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  /* must NOT be hidden — hidden clips the floating calendar */
+  z-index: 1;
+  /* below .filter-section (z-index: 10) */
+
+  /* 🚀 اضافه شدن شتاب‌دهنده سخت‌افزاری برای روان شدن اسکرول کارت‌های شیشه‌ای */
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.task-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  transition: var(--transition);
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.task-status-pending::before {
+  background: var(--color-pending);
+}
+
+.task-status-done::before {
+  background: var(--color-done);
+}
+
+.task-status-expired::before {
+  background: var(--color-expired);
+}
+
+.task-status-done {
+  opacity: 0.75;
+}
+
+.task-status-expired {
+  opacity: 0.72;
+}
+
+.task-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+  box-shadow: 0 0 7px currentColor;
+}
+
+.dot-pending {
+  background: var(--color-pending);
+  color: var(--color-pending);
+}
+
+.dot-done {
+  background: var(--color-done);
+  color: var(--color-done);
+}
+
+.dot-expired {
+  background: var(--color-expired);
+  color: var(--color-expired);
+}
+
+.task-body {
+  flex: 1;
+  min-width: 0;
+  
+  /* 🎯 تبدیل به کانتینر فلکس برای مدیریت هوشمند فاصله‌ها */
+  display: flex;
+  flex-direction: column;
+  /* 🎯 رزرو فضای خالی (حدوداً به اندازه تایتل + دو خط توضیحات) */
+  min-height: 6rem; 
+}
+
+.task-title {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.22rem;
+  word-break: break-word;
+}
+
+.task-description {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.55rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+  
+  /* 🎯 جادوی اصلی: تاریخ و اولویت همیشه به پایین‌ترین قسمت ممکن هل داده می‌شوند */
+  margin-top: auto; 
+}
+
+.task-meta-item {
+  font-size: 0.77rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.task-priority-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.13rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.task-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.task-actions .btn {
+  width: 120px;
+}
+
+.inline-form {
+  display: inline;
+}
+
+/* Status badge — glass border-only, self-stretches to match button-stack height */
+.task-status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  /* fills full cross-axis height of the card flex row */
+  width: 3.2rem;
+  /* keeps it a perfect circle at any height            */
+  height: 3.2rem;
+  /* floor so it stays legible on very short cards      */
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+  /* Glass base */
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 3px solid transparent;
+  /* placeholder — overridden per state class */
+  box-shadow: var(--shadow);
+  transition: border-color 0.25s, color 0.25s;
+}
+
+/* State modifier classes — border-color + text color match exactly */
+.badge-done {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.badge-overdue {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.badge-today {
+  border-color: #b91c1c;
+  color: #b91c1c;
+}
+
+.badge-near {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.badge-mid {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.badge-far {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.badge-null {
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ EMPTY STATE: No-tasks placeholder with illustration
+   --------------------------------------------------------------------- */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.empty-icon {
+  font-size: 3.2rem;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  font-size: 0.97rem;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ MODAL DIALOG SYSTEM: Overlay, glass card, and form layout
+   --------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem; /* اضافه شدن فضای تنفس دور مودال */
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  width: 100%;
+  max-width: 600px;   
+  max-height: 90vh;   
+  overflow-y: auto;
+  padding: 0;
+  border-radius: var(--radius); /* اطمینان از حفظ ظاهر شیشه‌ای و گرد */
+  animation: modalSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  width: 100%;
+  max-width: 600px;   
+  max-height: 90vh;   
+  overflow-y: auto;
+  padding: 0;
+  border-radius: var(--radius); /* اطمینان از حفظ ظاهر شیشه‌ای و گرد */
+  animation: modalSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalSlide {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.4rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.1rem;
+}
+
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  padding: 0.22rem;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--color-expired);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.modal-info-msg {
+  font-size: 0.83rem;
+  color: #d97706;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm);
+  margin: 0.65rem 1.4rem 0;
+  padding: 0.55rem 0.85rem;
+}
+
+body.dark .modal-info-msg {
+  color: #fcd34d;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  padding: 0.9rem 1.4rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ DATE & TIME PICKER: Jalali calendar popup and time selector
+   --------------------------------------------------------------------- */
+.picker-summary {
+  background: var(--accent-light);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.7rem;
+  min-height: 2.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.picker-summary-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  direction: rtl;
+  text-align: right;
+}
+
+.picker-row {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 0.5rem;
+}
+
+.picker-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.picker-box:hover,
+.picker-box:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+  outline: none;
+}
+
+.picker-box-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.picker-box-val {
+  font-size: 0.87rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Jalali calendar popup */
+.jalali-cal {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp 0.18s ease;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.cal-nav {
+  background: var(--accent-light);
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0.25rem 0.55rem;
+  font-size: 1.1rem;
+  color: var(--accent);
+  transition: var(--transition);
+}
+
+.cal-nav:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.cal-month-year {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 0.35rem;
+  text-align: center;
+}
+
+.cal-weekdays span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0.2rem 0;
+}
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-day {
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0.35rem 0.2rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.cal-day:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.cal-day.selected {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: #fff;
+  font-weight: 700;
+}
+
+.cal-day.today {
+  outline: 1.5px solid var(--accent);
+  font-weight: 700;
+}
+
+.cal-day.empty {
+  cursor: default;
+  pointer-events: none;
+}
+
+.cal-day:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Time picker popup */
+.time-picker {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  animation: fadeUp 0.18s ease;
+}
+
+.time-picker-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  direction: ltr;
+}
+
+.time-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.time-arrow {
+  background: var(--accent-light);
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.time-arrow:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.time-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  min-width: 2.2rem;
+  text-align: center;
+  font-family: inherit;
+}
+
+.time-unit {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.time-sep {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  padding-bottom: 1.2rem;
+}
+
+.time-ampm-toggle {
+  background: var(--accent-light);
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  transition: var(--transition);
+  margin-top: 0.25rem;
+}
+
+.time-ampm-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.time-confirm {
+  align-self: stretch;
+}
+
+/* Duration picker — form-group wrapper containing trigger + popup */
+.dur-picker-wrap {
+  position: relative;
+}
+
+.dur-picker-wrap .time-picker {
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+}
+
+/* --- ▷ Filter Date Picker: Compact inline version for filter bars --- */
+
+/* Wrapper gives us the positioning context for the floating calendar */
+.filter-picker-wrapper {
+  position: relative;
+}
+
+/* Compact variant of .picker-box used in filter bars */
+.filter-picker-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  min-width: 9rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.filter-picker-box:hover,
+.filter-picker-box:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+  outline: none;
+}
+
+.filter-picker-box .picker-box-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.filter-picker-box .picker-box-val {
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Floating calendar — positioned absolutely below the trigger box */
+.filter-cal {
+  position: absolute;
+  top: calc(100% + 6px);
+  /* RTL: open from the right edge; LTR: open from the left edge */
+  inset-inline-start: 0;
+  z-index: 9999;
+  /* above ALL stacking contexts including glass/backdrop-filter elements */
+  min-width: 16rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp 0.15s ease;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ SETTINGS PAGE: Preference cards, priority manager, theme toggle
+   --------------------------------------------------------------------- */
+.settings-section {
+  max-width: 680px;
+  margin: 0 auto;
+  display: block; /* غیرفعال کردن فلکس‌باکس برای جلوگیری از ایجاد فاصله مضاعف */
+}
+
+/* افزودن حاشیه پایینی به کارت‌ها برای حفظ فاصله بین باکس اول و دوم تنظیمات */
+.settings-section .settings-card {
+  margin-bottom: 1.25rem; 
+}
+
+.settings-card {
+  padding: 1.5rem 1.75rem;
+}
+
+.settings-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.settings-card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.settings-group {
+  margin-bottom: 1.25rem;
+}
+
+.settings-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+  text-align: start;
+}
+
+/* کانتینر اصلی دکمه‌ها - اینجا تعیین می‌کند دکمه‌ها کنار هم باشند */
+.toggle-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly; /* 🎯 جادوی تعادل: فضای مساوی در چپ، راست و وسط */
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+
+/* استایل خود دکمه‌ها */
+.toggle-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42%; /* 🎯 سایز ایده‌آل: نه خیلی بزرگ نه خیلی کوچک */
+  padding: 0.55rem 0.5rem;
+  border: 1.5px solid var(--input-border);
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  user-select: none;
+}
+
+.toggle-option:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.toggle-option.active {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: #fff;
+  font-weight: 700;
+}
+
+.toggle-radio {
+  display: none;
+}
+
+.settings-footer {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.settings-footer .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Priority section within settings */
+.priority-section {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.priority-section-title {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.65rem;
+}
+
+.priority-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.priority-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  background: var(--accent-light);
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.priority-item:hover {
+  background: rgba(124, 58, 237, 0.2);
+}
+
+.priority-item-default {
+  background: var(--border);
+}
+
+.priority-item-default:hover {
+  background: var(--border);
+}
+
+.priority-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.priority-badge-default {
+  font-size: 0.71rem;
+  color: var(--text-muted);
+  background: var(--border);
+  padding: 0.12rem 0.5rem;
+  border-radius: 20px;
+}
+
+.priority-empty {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.priority-add-section {
+  padding-top: 0.25rem;
+}
+
+.add-priority-input {
+  margin-top: 0.75rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ ANALYTICS PAGE: Chart grid, donut containers, and stat cards
+   --------------------------------------------------------------------- */
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+/* بزرگ‌تر کردن اختصاصی آیکون‌ها در عناوین اصلی صفحات و بخش‌ها */
+.page-title .app-icon,
+.tasks-title .app-icon {
+  width: 1.85rem;
+  height: 1.85rem;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.analytics-box {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.analytics-box-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.analytics-box-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -0.65rem;
+}
+
+.chart-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0.4rem 0;
+}
+
+.chart-wrapper canvas {
+  max-width: 140px; 
+  max-height: 140px;
+}
+
+.chart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0;
+}
+
+.chart-empty-state canvas {
+  max-width: 140px; /* همگام‌سازی با ابعاد HTML */
+  max-height: 140px;
+}
+
+.chart-empty-msg {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.chart-legend {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.86rem;
+}
+
+.legend-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.legend-count {
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 1.4rem;
+  text-align: center;
+}
+
+.legend-pct {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  min-width: 3.4rem;
+  text-align: start;
+}
+
+.analytics-total {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.analytics-filter-form {
+  background: var(--accent-light);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+}
+
+.filter-row-compact {
+  gap: 0.45rem;
+}
+
+.analytics-back {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ SCROLLBAR CUSTOMIZATION: Themed scrollbar for webkit browsers
+   --------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   ⬛ RESPONSIVE DESIGN: Breakpoints at 900px, 480px, and 300px
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 300px) {
+  .header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 0.5rem 0;
+  }
+
+  .live-clock {
+    order: 3;
+    flex: 0 0 100%;
+    text-align: right;
+    font-size: 0.78rem;
+  }
+
+  .task-card {
+    flex-direction: column;
+  }
+
+  .task-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .picker-row {
+    flex-direction: column;
+  }
+
+  /* Hide bottom nav labels on very small screens, icons only */
+  .bnav-label {
+    display: none;
+  }
+
+  .bottom-nav-item {
+    justify-content: center;
+  }
+
+  .bnav-icon {
+    font-size: 1.5rem;
+  }
+
+--bnav-height: 54px;
+}
+
+@media (max-width: 480px) {
+
+  /* تنظیم باکس اصلی هدر برای تعادل فضا در موبایل */
+  .header-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    height: auto;
+    padding: 0.6rem 0.5rem 0.4rem 0.5rem;
+    gap: 0.3rem;
+  }
+
+  /* جمع‌وجور کردن بخش دکمه‌ها و آیکون‌های سمت راست هدر */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    /* کاهش فاصله بین دکمه‌ها برای جلوگیری از شلوغی در تصویر 11.jpg */
+  }
+
+  /* بهینه‌سازی اندازه دکمه‌های ناوبری روی گوشی */
+  .header-actions .btn-sm {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .header-actions .user-greeting {
+    font-size: 0.85rem;
+  }
+
+  /* شیک و مرکزچین کردن ساعت در ردیف دوم (حل مشکل اصلی تصاویر 11.jpg و 22.jpg) */
+  .live-clock {
+    position: static;
+    transform: none;
+    order: 3;
+    flex: 0 0 100%;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-secondary); /* ✅ استفاده از متغیر هوشمند تم */
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--border); /* ✅ استفاده از متغیر خط هماهنگ با تم */
+  }
+
+  /* بقیه کدهای مدیا کوئری شما بدون تغییر زیر این بخش می‌مانند */
+  .task-card {
+    flex-direction: column;
+  }
+
+  .task-actions {
+    flex-direction: row;
+    flex-wrap: nowrap; 
+    width: 100%;
+    gap: 0.4rem;
+  }
+
+  /* 🎯 جادوی اصلی: فرم‌ها و دکمه‌ها فضا را کاملاً مساوی (1 قسمت از 3 قسمت) بین خود تقسیم کنند */
+  .task-actions > * {
+    flex: 1;
+    min-width: 0; /* جلوگیری از بیرون‌زدگی فرم‌ها */
+  }
+
+  /* 🎯 دکمه‌ها ۱۰۰٪ عرض ظرفِ خود (فرم) را پر کنند */
+  .task-actions .btn {
+    width: 100% !important;
+    padding: 0.45rem 0.1rem;
+    font-size: 0.75rem;
+    justify-content: center;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .picker-row {
+    flex-direction: column;
+  }
+
+  .bnav-label {
+    display: none;
+  }
+
+  .bottom-nav-item {
+    justify-content: center;
+  }
+
+  .bnav-icon {
+    font-size: 1.5rem;
+  }
+
+  /* تنظیمات چیدمان هدر تسک‌ها در موبایل */
+  .tasks-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* عنوان در بالا و سمت راست */
+  .tasks-header .tasks-title {
+    order: 1;
+  }
+  
+  /* دکمه در بالا و سمت چپ */
+  .tasks-header #openCreateModalBtn {
+    order: 2;
+  }
+  
+  /* باکس جستجو در ردیف دوم با عرض کامل */
+  .tasks-header .search-box {
+    order: 3;
+    max-width: 100% !important; 
+    flex: 1 1 100%;
+    margin: 1rem 0 0 0 !important; /* فاصله گرفتن از دکمه و عنوان */
+  }
+
+  --bnav-height: 54px;
+
+  .toggle-option {
+    padding: 0.45rem 0.2rem;
+    font-size: 0.82rem; 
+    white-space: nowrap; 
+  }
+
+  .settings-footer {
+    display: flex;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  
+  .settings-footer .btn,
+  .priority-add-section > .btn {
+    flex: 1;
+    width: 100% !important;
+    justify-content: center;
+  }
+
+  /* 🎯 شناور کردن بج وضعیت در موبایل */
+  .task-status-badge {
+    position: absolute;
+    top: 1rem;
+    inset-inline-end: 1.2rem; 
+    
+    width: 2.9rem;  
+    height: 2.9rem;
+    font-size: 0.95rem;
+  }
+
+  /* 🎯 لغو فضای امن از کل بدنه تا نوار پایینی فضا داشته باشد */
+  .task-body {
+    padding-inline-end: 0 !important; 
+  }
+
+  /* 🎯 ایجاد فضای امن اختصاصی فقط برای متن‌ها تا زیر دایره نروند */
+  .task-title,
+  .task-description {
+    padding-inline-end: 3.5rem;
+  }
+  
+  /* 🎯 چیدمان هوشمند و سیال (اگر جا شد در یک خط، اگر نشد با فاصله زیبا در خط بعد) */
+  .task-meta {
+    display: flex;
+    flex-wrap: wrap; /* جادوی هوشمندی: اجازه شکستن به خط بعد */
+    gap: 0.45rem;    /* این فاصله هم بین آیتم‌هاست و هم بین خطوط بالا و پایین */
+  }
+
+  .task-meta-item {
+    font-size: 0.77rem; /* سایز درشت و خوانا */
+  }
+
+  .task-priority-badge {
+    font-size: 0.73rem;
+    padding: 0.13rem 0.5rem;
+  }
+}
+
+.auth-card {
+  padding: 1.75rem 1.25rem;
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 0;
+  animation: modalSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.modal-overlay {
+  align-items: center;
+}
+
+.settings-card {
+  padding: 1.1rem 1.1rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ UTILITY ANIMATIONS: Keyframes and dark-mode SVG filters
+   --------------------------------------------------------------------- */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.task-status-pending .task-status-dot {
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+/* استایل عمومی برای تمام آیکون‌های جدید SVG */
+/*.app-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-block;
+    vertical-align: middle;
+}*/
+
+/* سفید کردن یکجای تمام آیکون‌های جدید در حالت دارک‌مود */
+body.dark .btn-icon-svg,
+body.dark .app-icon {
+  filter: brightness(0) invert(1) !important;
+}
+
+.task-status-badge.badge-done img,
+.task-status-badge.badge-far img {
+  filter: brightness(0) saturate(100%) invert(62%) sepia(86%) saturate(427%) hue-rotate(92deg) !important;
+}
+
+.task-status-badge.badge-overdue img,
+.task-status-badge.badge-today img,
+.task-status-badge.badge-near img {
+  filter: brightness(0) saturate(100%) invert(40%) sepia(84%) saturate(5947%) hue-rotate(345deg) !important;
+}
+
+/* مخفی کردن تاریخ ایجاد تسک از دید کاربر و حفظ آن در کدهای ساختاری */
+.task-created {
+    display: none !important;
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ LIVE SEARCH: Card-style hover and focus search input
+   --------------------------------------------------------------------- */
+
+/* ۱. حالت پیش‌فرض (سایز ثابت و سایه عادی مثل کارت‌ها) */
+.search-box {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin: 0 1rem;
+  max-width: 230px; /* یک عرض ثابت و متناسب */
+  padding: 0.45rem 0.8rem;
+  border-radius: 50px;
+  
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  box-shadow: var(--shadow); /* سایه عادی مثل کارت‌ها */
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow; /* برای روانی انیمیشن در مرورگر */
+}
+
+/* استایل متون داخل باکس */
+.search-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  margin: 0 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* دکمه ضربدر برای پاک کردن جستجو */
+/* دکمه ضربدر برای پاک کردن جستجو */
+.clear-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 0 0.4rem;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* قرمز شدن ضربدر هنگام رفتن موس روی آن */
+.clear-search-btn:hover {
+  color: var(--color-expired); 
+}
+
+/* قرمز شدن ضربدر هنگام رفتن موس روی آن */
+.clear-search-btn:hover {
+  color: var(--color-expired);
+}
+
+/* ۲. رفتار هاور (وقتی موس روی آن می‌رود - دقیقاً مثل کارت‌های تسک) */
+.search-box:hover {
+  transform: translateY(-2px); /* کمی بالا آمدن */
+  box-shadow: var(--shadow-lg); /* سایه عمیق‌تر و پخش‌تر */
+}
+
+/* ۳. رفتار کلیک/تایپ (وقتی روی آن کلیک می‌شود) */
+.search-box:focus-within {
+  transform: translateY(-2px) scale(1.03); /* کمی بالا آمدن + یک ذره بزرگ‌نمایی به سمت کاربر */
+  border-color: var(--accent); /* رنگی شدن حاشیه با رنگ اصلی تم */
+  background: var(--input-bg); /* کمی واضح‌تر شدن بک‌گراند */
+  box-shadow: 0 12px 25px rgba(124, 58, 237, 0.2); /* یک سایه رنگی ملایم و جذاب */
+}
+
+
+
+/* ---------------------------------------------------------------------
+   ⬛ CUSTOM SELECT DROPDOWNS: Glassmorphism animated selects
+   --------------------------------------------------------------------- */
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* پنهان کردن سلکت خشک و اصلی مرورگر */
+.custom-select-wrapper select {
+  display: none !important;
+}
+
+/* دکمه‌ای که به کاربر نمایش داده می‌شود */
+.custom-select-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.42rem 0.7rem; 
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 0.83rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+  min-width: 110px; /* جلوگیری از بهم ریختگی عرض */
+}
+
+/* یکسان‌سازی قطعی و میلی‌متری تمام فیلدهای مُدال (اولویت، زمان و تاریخ) */
+.form-group .custom-select-trigger,
+.form-group .picker-box {
+  height: 44px;           /* تعیین یک ارتفاع دقیق و ثابت برای جلوگیری از نوسان */
+  padding: 0 0.85rem;     /* حذف پدینگ بالا و پایین (محتوا توسط flex وسط‌چین می‌شود) */
+  font-size: 0.87rem;      
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+/* افکت هنگام کلیک روی دکمه */
+.custom-select-wrapper.open .custom-select-trigger {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.12);
+}
+
+/* فلش نرم و انیمیشنی کنار دراپ‌داون */
+.custom-select-trigger::after {
+  content: '▼';
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-select-wrapper.open .custom-select-trigger::after {
+  transform: rotate(180deg);
+}
+
+/* منوی بازشو (انیمیشن باز شدن و افکت شیشه) */
+/* --- منوی بازشو با پس‌زمینه کاملاً توپر (بدون شفافیت) --- */
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+  
+  /* 🔴 رنگ توپر سفید برای تم روشن (بدون هیچ شفافیتی) */
+  background: #ffffff; 
+  
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  
+  /* برگرداندن overflow برای حفظ گردی لبه‌ها در حالت Hover */
+  overflow: hidden; 
+  
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 🟢 رنگ پس‌زمینه توپر برای حالت تاریک (Dark Mode) */
+body.dark .custom-select-options {
+  background: #1a0a2e; 
+  border-color: rgba(120, 90, 180, 0.4);
+}
+
+.custom-select-wrapper.open .custom-select-options {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* تک‌تک گزینه‌های داخل منو */
+.custom-select-option {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.83rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* جایگزینِ رنگ آبیِ خشک سیستم‌عامل با رنگ تم سایت */
+.custom-select-option:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+/* استایل گزینه‌ای که در حال حاضر انتخاب شده است */
+.custom-select-option.selected {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: #fff;
+  font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ Z-INDEX STACKING FIXES: Prevent menu overlap with navigation
+   --------------------------------------------------------------------- */
+
+/* 1. منوها و تقویم در صفحه آنالیز رو به بالا باز شوند */
+.analytics-filter-form .custom-select-options,
+.analytics-filter-form .filter-cal {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+/* 2. اصلاح جهت انیمیشن منو برای حالت رو به بالا */
+.analytics-filter-form .custom-select-options {
+  transform: translateY(10px);
+}
+
+/* 3. محدود کردن ارتفاع تمام منوها و فعال‌سازی اسکرول (برای منوهای طولانی) */
+.custom-select-options {
+  max-height: 180px; 
+  overflow-y: auto;  
+}
+
+/* زیباتر و واضح‌تر کردن نوار اسکرول داخلی منوها */
+.custom-select-options::-webkit-scrollbar {
+  width: 8px; /* پهنای اسکرول‌بار بیشتر شد تا راحت‌تر دیده شود */
+}
+
+/* پس‌زمینه مسیر اسکرول (Track) */
+.custom-select-options::-webkit-scrollbar-track {
+  background: var(--input-bg); /* رنگ پس‌زمینه ملایم برای مشخص شدن مسیر */
+  border-radius: 8px;
+}
+
+/* اهرم اسکرول (Thumb) */
+.custom-select-options::-webkit-scrollbar-thumb {
+  background: var(--text-muted); /* رنگ پررنگ‌تر برای دیده شدن بهتر اهرم */
+  border-radius: 8px;
+  border: 2px solid var(--input-bg); /* حاشیه برای ایجاد فاصله با لبه‌ها */
+}
+
+/* تغییر رنگ اهرم هنگام رفتن موس روی آن */
+.custom-select-options::-webkit-scrollbar-thumb:hover {
+  background: var(--accent); /* تغییر به رنگ اصلی تم (بنفش) موقع هاور */
+}
+
+
+
+/* ---------------------------------------------------------------------
+   ⬛ RECOVERY SYSTEM: Password recovery modal and form styles
+   --------------------------------------------------------------------- */
+.recovery-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.recovery-grid .form-control {
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.forgot-password-link {
+  display: block;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+body.lang-en .forgot-password-link {
+  text-align: left;
+}
+
+.forgot-password-link:hover {
+  color: var(--accent);
+}
+
+.alert-message {
+  font-size: 0.85rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.alert-danger { 
+  background: rgba(239, 68, 68, 0.15); 
+  color: #ef4444; 
+  border: 1px solid rgba(239, 68, 68, 0.4); 
+}
+.alert-success { 
+  background: rgba(16, 185, 129, 0.15); 
+  color: #10b981; 
+  border: 1px solid rgba(16, 185, 129, 0.4); 
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ AUTH & RECOVERY MODALS: Shared modal overlay styles
+   --------------------------------------------------------------------- */
+
+/* دکمه‌های تایید فرم لاگین و تغییر رمز */
+.auth-submit-btn {
+  margin-top: 1.5rem;
+}
+
+/* بدنه اصلی مودال بازیابی */
+.recovery-modal-body {
+  padding: 1.5rem;
+}
+
+/* متن راهنمای وارد کردن ۵ تسک */
+.recovery-instruction {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* فاصله بین فیلد رمز جدید و تکرار آن */
+.recovery-confirm-group {
+  margin-top: 0.8rem;
+}
+
+/* دکمه‌های پایینی بخش ورود ۵ تسک (تایید و انصراف) */
+.recovery-footer-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* هم‌عرض کردن دکمه‌های مودال بازیابی */
+.recovery-footer-actions .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+/* تنظیمات اختصاصی باکس تم در صفحه تنظیمات */
+.theme-settings-group {
+  margin-top: 1.25rem; /* حل مشکل چسبیدن دکمه‌ها به تایتل */
+  margin-bottom: 0;    /* صفر کردن حاشیه پایین چون دکمه ذخیره ندارد */
+}
+
+.theme-btn-icon {
+  margin-inline-end: 0.4rem;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+
+/* ---------------------------------------------------------------------
+   ⬛ PWA INSTALL BANNER: Centered glassmorphism install prompt
+   --------------------------------------------------------------------- */
+.pwa-install-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  z-index: 9999;
+  
+  /* تنظیمات شیشه‌ای دقیقاً مشابه هدر با ماتی بیشتر */
+  background: var(--header-bg) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  
+  /* این خط یک سایه می‌سازد که کل فضای پشت بنر را کمی تاریک می‌کند */
+  box-shadow: var(--shadow-lg), 0 0 0 100vw rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius);
+  padding: 1.8rem 1.5rem;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  
+  /* مخفی بودن پیش‌فرض برای انیمیشن */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* کلاسی که با جاوااسکریپت اضافه می‌شود تا بنر ظاهر شود */
+.pwa-install-banner.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.pwa-banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.pwa-banner-content img {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.pwa-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pwa-banner-text strong {
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.pwa-banner-text span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.pwa-banner-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.pwa-banner-actions .btn-primary {
+  flex: 1;
+  justify-content: center;
+  padding: 0.65rem;
+  font-size: 0.95rem;
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- =====================================================================
+     FILE: static/offline.html
+     PURPOSE: Offline fallback page for the TaskMen PWA. Displayed by the Service Worker when the user has no network connectivity, with bilingual messaging and retry functionality.
+     ===================================================================== -->
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>آفلاین — Offline</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/192.png" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  
+  <!-- اجرای سریع تم و زبان برای جلوگیری از پرش استایل -->
+  <script>
+    if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    
+    const savedLang = localStorage.getItem('offline_lang') || 'fa';
+    if (savedLang === 'en') {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+    }
+  </script>
+
+  <style>
+    .offline-wrapper { display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 1rem; }
+    .lang-en-only, .lang-fa-only { display: none; }
+    html[lang="en"] .lang-en-only { display: block; }
+    html[lang="en"] span.lang-en-only { display: inline; }
+    html[lang="fa"] .lang-fa-only { display: block; }
+    html[lang="fa"] span.lang-fa-only { display: inline; }
+    
+    .app-icon { width: 24px !important; height: 24px !important; object-fit: contain; }
+    .brand-icon img { width: 28px !important; height: 28px !important; object-fit: contain; }
+  </style>
+</head>
+<body class="lang-fa">
+  <!-- تنظیم کلاس اولیه بادی برای فونت و جهت -->
+  <script>
+    if (localStorage.getItem('offline_lang') === 'en') {
+      document.body.classList.replace('lang-fa', 'lang-en');
+    }
+  </script>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ SITE HEADER: Minimal header with brand and offline language toggle
+       --------------------------------------------------------------------- -->
+  <header class="site-header glass">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon"><img src="/static/icons/192.png" class="app-icon" alt="PlanSpark"></span>
+        <span class="brand-name">
+          <span class="lang-fa-only">پلن‌اسپارک</span>
+          <span class="lang-en-only">PlanSpark</span>
+        </span>
+      </div>
+
+      <nav class="header-actions">
+        <!-- دکمه تغییر زبان آفلاین -->
+        <button class="btn btn-outline btn-sm" id="langToggle">
+          <span class="lang-fa-only">EN</span>
+          <span class="lang-en-only">فا</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ OFFLINE MESSAGE: No-connection notice with retry button
+       --------------------------------------------------------------------- -->
+  <main class="main-content offline-wrapper">
+    <div class="auth-card glass" style="max-width: 450px; text-align: center;">
+      
+      <h1 class="auth-title" style="margin-bottom: 1rem; color: var(--color-expired);">
+        <span class="lang-fa-only">شما آفلاین هستید</span>
+        <span class="lang-en-only">You are Offline</span>
+      </h1>
+      
+      <p class="auth-subtitle" style="margin-bottom: 2rem; line-height: 1.6;">
+        <span class="lang-fa-only">لطفاً اتصال اینترنت خود را بررسی کنید. اپلیکیشن در حال حاضر به شبکه دسترسی ندارد و نمی‌تواند اطلاعات را همگام‌سازی کند.</span>
+        <span class="lang-en-only">Please check your internet connection. The application cannot reach the network right now to sync data.</span>
+      </p>
+      
+      <button onclick="window.location.reload()" class="btn btn-primary btn-block auth-submit-btn">
+        <span class="lang-fa-only">تلاش مجدد</span>
+        <span class="lang-en-only">Try Again</span>
+      </button>
+
+    </div>
+  </main>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ PAGE SCRIPTS: Offline language switcher and direction handler
+       --------------------------------------------------------------------- -->
+  <script>
+    'use strict';
+    
+    // منطق تغییر زبان و جهت در حالت آفلاین
+    const langToggle = document.getElementById('langToggle');
+    
+    langToggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const body = document.body;
+      const newLang = html.lang === 'fa' ? 'en' : 'fa';
+      
+      // تغییر اتریبیوت‌های اصلی HTML
+      html.lang = newLang;
+      html.dir = newLang === 'fa' ? 'rtl' : 'ltr';
+      
+      // تغییر کلاس‌های Body برای اعمال فونت و Flexbox از فایل style.css
+      if (newLang === 'fa') {
+        body.classList.remove('lang-en');
+        body.classList.add('lang-fa');
+      } else {
+        body.classList.remove('lang-fa');
+        body.classList.add('lang-en');
+      }
+      
+      // ذخیره در حافظه کش مرورگر
+      localStorage.setItem('offline_lang', newLang);
+    });
+  </script>
+</body>
+</html>

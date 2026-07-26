@@ -1,0 +1,622 @@
+{% extends "base.html" %}
+<!-- =====================================================================
+     FILE: templates/index.html
+     PURPOSE: Main dashboard and task-list page. Provides the complete task management interface with hero summary, filter panel, task cards, and create/edit modals with Jalali date pickers.
+     ===================================================================== -->
+
+{% block title %}{{ t.tasks_heading }} — {{ t.brand }}{% endblock %}
+
+{% block content %}
+<!-- ---------------------------------------------------------------------
+     ⬛ FILTER BOX: Status, time-range, and priority filter panel
+     --------------------------------------------------------------------- -->
+<section class="filter-section">
+  <h1 class="page-title"><img src="{{ url_for('static', filename='icons/filter.svg') }}" class="app-icon" alt=""> {{ t.filter_title }}</h1>
+  <div class="filter-box glass" aria-label="{{ t.filter_status }}">
+    <form method="GET" action="{{ url_for('index') }}" id="filterForm" novalidate>
+
+      <div class="filter-row">
+
+        <!-- Status -->
+        <div class="filter-group">
+          <label for="statusFilter" class="filter-label">{{ t.filter_status }}</label>
+          <select name="status" id="statusFilter" class="filter-select">
+            <option value="all" {% if status_filter=='all' %}selected{% endif %}>{{ t.status_all }}</option>
+            <option value="pending" {% if status_filter=='pending' %}selected{% endif %}>{{ t.status_pending }}</option>
+            <option value="done" {% if status_filter=='done' %}selected{% endif %}>{{ t.status_done }}</option>
+            <option value="expired" {% if status_filter=='expired' %}selected{% endif %}>{{ t.status_expired }}</option>
+          </select>
+        </div>
+
+        <!-- Time range -->
+        <div class="filter-group">
+          <label for="timeRangeFilter" class="filter-label">{{ t.filter_time_range }}</label>
+          <select name="time_range" id="timeRangeFilter" class="filter-select">
+            <option value="all" {% if time_range=='all' %}selected{% endif %}>{{ t.range_all }}</option>
+            <option value="daily" {% if time_range=='daily' %}selected{% endif %}>{{ t.range_daily }}</option>
+            <option value="weekly" {% if time_range=='weekly' %}selected{% endif %}>{{ t.range_weekly }}</option>
+            <option value="monthly" {% if time_range=='monthly' %}selected{% endif %}>{{ t.range_monthly }}</option>
+            <option value="yearly" {% if time_range=='yearly' %}selected{% endif %}>{{ t.range_yearly }}</option>
+            <option value="custom" {% if time_range=='custom' %}selected{% endif %}>{{ t.range_custom }}</option>
+          </select>
+        </div>
+
+        <!-- Custom date range — Jalali calendar pickers -->
+        <div class="filter-group custom-date-group {% if time_range != 'custom' %}hidden{% endif %}"
+          id="customDateGroup">
+          <label class="filter-label">{{ t.filter_from }}</label>
+          <!-- Hidden input carries YYYY-MM-DD (Latin) to the backend -->
+          <input type="hidden" name="start_date" id="startDateHidden" value="{{ start_date }}" />
+          <div class="filter-picker-wrapper">
+            <div class="picker-box filter-picker-box" id="startDateBox" tabindex="0" role="button" aria-haspopup="true"
+              aria-label="{{ t.picker_select_date }}">
+              <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/calendar.svg') }}"
+                  class="app-icon" alt=""></span>
+              <span class="picker-box-val" id="startDateDisplay">{{ t.picker_select_date }}</span>
+            </div>
+            <div class="jalali-cal filter-cal hidden" id="startDateCal" role="dialog" aria-label="{{ t.cal_aria }}">
+              <div class="cal-header">
+                <button type="button" class="cal-nav" id="startDateCalPrev"
+                  aria-label="{{ t.cal_prev_month }}">‹</button>
+                <span class="cal-month-year" id="startDateCalLabel"></span>
+                <button type="button" class="cal-nav" id="startDateCalNext"
+                  aria-label="{{ t.cal_next_month }}">›</button>
+              </div>
+              <div class="cal-weekdays">
+                {% for h in t.cal_headers %}<span>{{ h }}</span>{% endfor %}
+              </div>
+              <div class="cal-days" id="startDateCalDays"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group custom-date-group {% if time_range != 'custom' %}hidden{% endif %}"
+          id="customDateGroupEnd">
+          <label class="filter-label">{{ t.filter_to }}</label>
+          <input type="hidden" name="end_date" id="endDateHidden" value="{{ end_date }}" />
+          <div class="filter-picker-wrapper">
+            <div class="picker-box filter-picker-box" id="endDateBox" tabindex="0" role="button" aria-haspopup="true"
+              aria-label="{{ t.picker_select_date }}">
+              <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/calendar.svg') }}"
+                  class="app-icon" alt=""></span>
+              <span class="picker-box-val" id="endDateDisplay">{{ t.picker_select_date }}</span>
+            </div>
+            <div class="jalali-cal filter-cal hidden" id="endDateCal" role="dialog" aria-label="{{ t.cal_aria }}">
+              <div class="cal-header">
+                <button type="button" class="cal-nav" id="endDateCalPrev" aria-label="{{ t.cal_prev_month }}">‹</button>
+                <span class="cal-month-year" id="endDateCalLabel"></span>
+                <button type="button" class="cal-nav" id="endDateCalNext" aria-label="{{ t.cal_next_month }}">›</button>
+              </div>
+              <div class="cal-weekdays">
+                {% for h in t.cal_headers %}<span>{{ h }}</span>{% endfor %}
+              </div>
+              <div class="cal-days" id="endDateCalDays"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Priority -->
+        <div class="filter-group">
+          <label for="priorityFilter" class="filter-label">{{ t.filter_priority }}</label>
+          <select name="priority" id="priorityFilter" class="filter-select">
+            <option value="all" {% if priority_filter=='all' %}selected{% endif %}>{{ t.status_all }}</option>
+            {% for storage_key, display_label in localized_default_priorities %}
+            <option value="{{ storage_key }}" {% if priority_filter==storage_key %}selected{% endif %}>{{ display_label
+              }}</option>
+            {% endfor %}
+            {% for p in all_priorities if p not in DEFAULT_PRIORITIES %}
+            <option value="{{ p }}" {% if priority_filter==p %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="filter-group filter-actions">
+          <button type="submit" class="btn btn-primary btn-sm" id="applyFiltersBtn">{{ t.filter_apply }}</button>
+          <a href="{{ url_for('index') }}" class="btn btn-outline btn-sm" id="resetFiltersBtn">{{ t.filter_clear }}</a>
+        </div>
+
+      </div>
+
+      {% if time_filter_error %}
+      <p class="filter-error" role="alert"><img src="{{ url_for('static', filename='icons/alert.svg') }}"
+          class="app-icon" alt=""> {{ time_filter_error }}</p>
+      {% endif %}
+
+    </form>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------------
+     ⬛ LIVE SEARCH: Real-time task search input
+     --------------------------------------------------------------------- -->
+
+
+
+
+<section class="tasks-section">
+
+
+
+
+
+
+<!-- ---------------------------------------------------------------------
+     ⬛ TASK LIST: Task cards with status badges, actions, and empty state
+     --------------------------------------------------------------------- -->
+<div class="tasks-header">
+    <!-- بخش عنوان -->
+    <h2 class="tasks-title">
+      <img src="{{ url_for('static', filename='icons/task.svg') }}" class="app-icon" alt=""> {{ t.tasks_heading }}
+      <span class="task-count badge" id="taskCountBadge">{{ tasks | length }}</span>
+    </h2>
+
+<!-- باکس جستجوی جدید (همراه با آیکون و پشتیبانی دو زبانه) -->
+<!-- باکس جستجوی انیمیشنی -->
+<div class="search-box glass">
+  <img src="{{ url_for('static', filename='icons/search.svg') }}" class="app-icon" alt="">
+  <input type="text" id="taskLiveSearch" placeholder="{{ t.search_placeholder }}" class="search-input">
+  <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;" aria-label="Clear">✕</button>
+</div>
+
+    <!-- دکمه جدید -->
+    <button class="btn btn-primary" id="openCreateModalBtn" aria-haspopup="dialog" aria-controls="createTaskModal">
+      <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="app-icon" alt=""> {{ t.btn_new_task }}
+    </button>
+</div>
+
+  {% if tasks %}
+  <ul class="task-list" id="taskList" aria-label="{{ t.tasks_heading }}">
+    {% for task in tasks %}
+    <li class="task-card glass task-status-{{ task.status }}" data-task-id="{{ task.id }}"
+      data-status="{{ task.status }}">
+      <span class="task-status-dot dot-{{ task.status }}" aria-hidden="true"></span>
+
+      <div class="task-body">
+        <p class="task-title">{{ task.title }}</p>
+        {% if task.description %}
+        <p class="task-description">{{ task.description }}</p>
+        {% endif %}
+
+        <div class="task-meta">
+          {% if task.priority %}
+          {# Display localized name for default priorities #}
+          {% set pdisp = namespace(label=task.priority) %}
+          {% for sk, dl in localized_default_priorities %}
+          {% if sk == task.priority %}{% set pdisp.label = dl %}{% endif %}
+          {% endfor %}
+          <span class="task-priority-badge">{{ pdisp.label }}</span>
+          {% endif %}
+          <!-- تاریخ انقضا -->
+          <span class="task-meta-item" title="{{ t.label_expires_at }}">
+            <img src="{{ url_for('static', filename='icons/calendar2.svg') }}" class="app-icon" alt=""> 
+            <span dir="{{ 'rtl' if user_lang == 'fa' else 'ltr' }}">{{ utc_naive_to_jalali_str(task.expires_at, fmt=None, date_format=user_date_fmt, language=user_lang, date_style=user_date_style) }}</span>
+          </span>
+          
+          <!-- زمان تخمینی -->
+          {% if task.estimated_time is not none %}
+          <span class="task-meta-item" title="{{ t.label_estimated }}">
+            <img src="{{ url_for('static', filename='icons/clock.svg') }}" class="app-icon" alt=""> {{
+            localize_digits(task.estimated_time, user_lang) }} {{ t.unit_minutes }}
+          </span>
+          {% endif %}
+          
+          <!-- تاریخ ایجاد (مخفی برای کلاینت اما موجود در کد) -->
+          <span class="task-meta-item task-created" title="{{ t.label_created_at }}">
+            <img src="{{ url_for('static', filename='icons/pin.svg') }}" class="app-icon" alt=""> 
+            <span dir="{{ 'rtl' if user_lang == 'fa' else 'ltr' }}">{{ utc_naive_to_jalali_str(task.created_at, fmt=None, date_format=user_date_fmt, language=user_lang, date_style=user_date_style) }}</span>
+          </span>
+        </div>
+      </div>
+
+      {# ── Status Badge ─────────────────────────────────────────────── #}
+      {% if task.status == 'done' %}
+      {% set _badge_cls = 'badge-done' %}
+      {% set _badge_content = '✅' %}
+      {% elif task.status == 'expired' %}
+      {% set _badge_cls = 'badge-overdue' %}
+      {% set _badge_content = '❌' %}
+      {% elif task.expires_at is not none %}
+      {% set _remaining = (task.expires_at - now_utc_naive).days %}
+      {% if _remaining == 0 %}
+      {% set _badge_cls = 'badge-today' %}
+      {% elif _remaining <= 2 %} {% set _badge_cls='badge-near' %} {% elif _remaining <=7 %} {% set
+        _badge_cls='badge-mid' %} {% else %} {% set _badge_cls='badge-far' %} {% endif %} {% set
+        _badge_content=_remaining %} {% else %} {% set _badge_cls='badge-null' %} {% set _badge_content='?' %} {% endif
+        %} <div class="task-status-badge {{ _badge_cls }}" id="badge-{{ task.id }}" aria-label="status badge">
+        {% if task.status == 'done' %}
+        <img src="{{ url_for('static', filename='icons/check.svg') }}" class="app-icon" alt="">
+        {% elif task.status == 'expired' or task.status == 'overdue' %}
+        <img src="{{ url_for('static', filename='icons/cancel.svg') }}" class="app-icon" alt="">
+        {% else %}
+        {{ _badge_content }}
+        {% endif %}
+        </div>
+
+        <div class="task-actions">
+          {% if task.status == 'pending' %}
+          <form method="POST" action="{{ url_for('task_done', task_id=task.id) }}" class="inline-form done-form"
+            data-task-id="{{ task.id }}">
+            {{ csrf_form.hidden_tag() }}
+            <button type="submit" class="btn btn-done btn-sm" id="doneBtn-{{ task.id }}"><img
+                src="{{ url_for('static', filename='icons/check.svg') }}" class="app-icon" alt=""> {{ t.btn_mark_done
+              }}</button>
+          </form>
+          {% elif task.status == 'done' %}
+          <span class="btn btn-done btn-sm btn-disabled"><img src="{{ url_for('static', filename='icons/check.svg') }}"
+              class="app-icon" alt=""> {{ t.done_badge }}</span>
+          {% elif task.status == 'expired' %}
+          <span class="btn btn-expired btn-sm btn-disabled"><img
+              src="{{ url_for('static', filename='icons/cancel.svg') }}" class="app-icon" alt=""> {{ t.expired_badge
+            }}</span>
+          {% endif %}
+
+          {% if task.status == 'pending' %}
+          <button type="button" class="btn btn-edit btn-sm" id="editBtn-{{ task.id }}" data-task-id="{{ task.id }}"
+            data-title="{{ task.title }}" data-description="{{ task.description or '' }}"
+            data-priority="{{ task.priority or '' }}"
+            data-expires="{{ utc_naive_to_jalali_str(task.expires_at, '%Y-%m-%d %H:%M') }}"
+            data-estimated="{{ task.estimated_time if task.estimated_time is not none else '' }}"><img
+              src="{{ url_for('static', filename='icons/pencil.svg') }}" class="app-icon" alt=""> {{ t.btn_edit
+            }}</button>
+          {% else %}
+          <span class="btn btn-edit btn-sm btn-disabled"><img src="{{ url_for('static', filename='icons/pencil.svg') }}"
+              class="app-icon" alt=""> {{ t.btn_edit }}</span>
+          {% endif %}
+
+          <form method="POST" action="{{ url_for('task_delete', task_id=task.id) }}" class="inline-form delete-form"
+            id="deleteForm-{{ task.id }}">
+            {{ csrf_form.hidden_tag() }}
+            <button type="button" class="btn btn-delete btn-sm" id="deleteBtn-{{ task.id }}"
+              data-form-id="deleteForm-{{ task.id }}"><img src="{{ url_for('static', filename='icons/trash.svg') }}"
+                class="app-icon" alt=""> {{ t.btn_delete }}</button>
+          </form>
+        </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% else %}
+  <div class="empty-state glass" role="status">
+    <span class="empty-icon"><img src="{{ url_for('static', filename='icons/mailbox.svg') }}" class="app-icon"
+        alt=""></span>
+    <p>{{ t.empty_tasks }}</p>
+    {% if status_filter != 'all' or time_range != 'all' or priority_filter != 'all' %}
+    <a href="{{ url_for('index') }}" class="btn btn-outline btn-sm">{{ t.filter_clear_filters }}</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</section>
+
+
+<!-- ---------------------------------------------------------------------
+     ⬛ CREATE TASK MODAL: New task form with Jalali date and time pickers
+     --------------------------------------------------------------------- -->
+<div class="modal-overlay hidden" id="createTaskModal" role="dialog" aria-modal="true"
+  aria-labelledby="createModalTitle">
+  <div class="modal glass">
+    <div class="modal-header">
+      <h2 id="createModalTitle" class="modal-title"><img src="{{ url_for('static', filename='icons/plus.svg') }}"
+          class="app-icon" alt=""> {{ t.modal_create_title }}</h2>
+      <button class="modal-close" aria-label="{{ t.btn_cancel }}" data-modal="createTaskModal">✕</button>
+    </div>
+
+    <form method="POST" action="{{ url_for('task_create') }}" novalidate id="createTaskForm">
+      {{ task_form.hidden_tag() }}
+
+      <div class="form-group" style="padding: 0 1.5rem;">
+        <label for="ct_title" class="form-label">{{ t.field_title }} <span class="required">*</span></label>
+        {{ task_form.title(id="ct_title", class="form-control", placeholder=t.placeholder_title) }}
+      </div>
+
+      <div class="form-group" style="padding: 0 1.5rem;">
+        <label for="ct_description" class="form-label">{{ t.field_description }}</label>
+        {{ task_form.description(id="ct_description", class="form-control", rows="2", placeholder=t.placeholder_desc) }}
+      </div>
+
+      <div class="form-row" style="padding: 0 1.5rem;">
+        <div class="form-group">
+          <label for="ct_priority" class="form-label">{{ t.field_priority }}</label>
+          <select name="priority" id="ct_priority" class="form-control" data-icon="{{ url_for('static', filename='icons/priority.svg') }}">
+            <option value="">{{ t.no_priority }}</option>
+            {% for storage_key, display_label in localized_default_priorities %}
+            <option value="{{ storage_key }}">{{ display_label }}</option>
+            {% endfor %}
+            {% for p in all_priorities if p not in DEFAULT_PRIORITIES %}
+            <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ t.field_estimated_time }}</label>
+          <!-- Hidden number input carries total minutes to backend -->
+          <input type="number" name="estimated_time" id="ct_estimated_time" min="0" class="form-control"
+            style="display:none" />
+
+          <div class="dur-picker-wrap">
+            <!-- Trigger box -->
+            <div class="picker-box" id="ct_est_box" tabindex="0" role="button" aria-haspopup="true"
+              aria-label="{{ t.est_select }}">
+              <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/timer.svg') }}"
+                  class="app-icon" alt=""></span>
+              <span class="picker-box-val" id="ct_est_display">{{ t.est_not_set }}</span>
+            </div>
+
+            <!-- Duration popup -->
+            <div class="time-picker hidden" id="ct_est_popup" role="dialog" aria-label="{{ t.est_select }}">
+              <div class="time-picker-inner">
+                <!-- Hours -->
+                <div class="time-col">
+                  <button type="button" class="time-arrow" data-target="ct_est_hr" data-dir="up"
+                    aria-label="{{ t.cal_next_month }}">&#9650;</button>
+                  <span class="time-val" id="ct_est_hr">0</span>
+                  <button type="button" class="time-arrow" data-target="ct_est_hr" data-dir="down"
+                    aria-label="{{ t.cal_prev_month }}">&#9660;</button>
+                  <span class="time-unit">{{ t.picker_unit_hour }}</span>
+                </div>
+                <span class="time-sep">:</span>
+                <!-- Minutes -->
+                <div class="time-col">
+                  <button type="button" class="time-arrow" data-target="ct_est_mn" data-dir="up"
+                    aria-label="{{ t.cal_next_month }}">&#9650;</button>
+                  <span class="time-val" id="ct_est_mn">00</span>
+                  <button type="button" class="time-arrow" data-target="ct_est_mn" data-dir="down"
+                    aria-label="{{ t.cal_prev_month }}">&#9660;</button>
+                  <span class="time-unit">{{ t.picker_unit_minute }}</span>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm time-confirm" id="ct_est_confirm">{{ t.picker_confirm
+                }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split date/time picker -->
+      <input type="hidden" name="expires_at" id="ct_expires_at_hidden" />
+
+      <div class="form-group" style="padding: 0 1.5rem;">
+        <label class="form-label">{{ t.field_expires_at }} <span class="required">*</span></label>
+
+        <div class="picker-summary" id="ct_picker_summary" aria-live="polite">
+          <span id="ct_summary_text" class="picker-summary-text">{{ t.picker_not_selected }}</span>
+        </div>
+
+        <div class="picker-row">
+          <div class="picker-box" id="ct_date_box" tabindex="0" role="button" aria-haspopup="true"
+            aria-label="{{ t.picker_select_date }}">
+            <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/calendar2.svg') }}"
+                class="app-icon" alt=""></span>
+            <span class="picker-box-val" id="ct_date_display">{{ t.picker_select_date }}</span>
+          </div>
+          <div class="picker-box" id="ct_time_box" tabindex="0" role="button" aria-haspopup="true"
+            aria-label="{{ t.picker_select_time }}">
+            <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/clock.svg') }}"
+                class="app-icon" alt=""></span>
+            <span class="picker-box-val" id="ct_time_display">{{ t.picker_select_time }}</span>
+          </div>
+        </div>
+
+        <!-- Jalali calendar popup -->
+        <div class="jalali-cal hidden" id="ct_cal_popup" role="dialog" aria-label="{{ t.cal_aria }}">
+          <div class="cal-header">
+            <button type="button" class="cal-nav" id="ct_cal_prev" aria-label="{{ t.cal_prev_month }}">‹</button>
+            <span class="cal-month-year" id="ct_cal_label"></span>
+            <button type="button" class="cal-nav" id="ct_cal_next" aria-label="{{ t.cal_next_month }}">›</button>
+          </div>
+          <div class="cal-weekdays">
+            {% for h in t.cal_headers %}<span>{{ h }}</span>{% endfor %}
+          </div>
+          <div class="cal-days" id="ct_cal_days"></div>
+        </div>
+
+        <!-- Time picker popup -->
+        <div class="time-picker hidden" id="ct_time_popup" role="dialog" aria-label="{{ t.time_picker_aria }}">
+          <div class="time-picker-inner">
+            <div class="time-col">
+              <button type="button" class="time-arrow" data-dir="up" data-target="ct_hr">▲</button>
+              <span class="time-val" id="ct_hr">12</span>
+              <button type="button" class="time-arrow" data-dir="down" data-target="ct_hr">▼</button>
+              <span class="time-unit">{{ t.picker_unit_hour }}</span>
+            </div>
+            <span class="time-sep">:</span>
+            <div class="time-col">
+              <button type="button" class="time-arrow" data-dir="up" data-target="ct_mn">▲</button>
+              <span class="time-val" id="ct_mn">00</span>
+              <button type="button" class="time-arrow" data-dir="down" data-target="ct_mn">▼</button>
+              <span class="time-unit">{{ t.picker_unit_minute }}</span>
+            </div>
+            <div class="time-col">
+              <button type="button" class="time-ampm-toggle" id="ct_ampm">PM</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm time-confirm" id="ct_time_confirm">{{ t.picker_confirm
+            }}</button>
+        </div>
+
+        <small class="form-hint">{{ t.picker_hint }}</small>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-modal="createTaskModal">{{ t.btn_cancel }}</button>
+        <button type="submit" class="btn btn-primary" id="createTaskSubmitBtn">{{ t.btn_save_task }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ---------------------------------------------------------------------
+     ⬛ EDIT TASK MODAL: Modify pending task deadline, priority, and estimate
+     --------------------------------------------------------------------- -->
+<div class="modal-overlay hidden" id="editTaskModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+  <div class="modal glass">
+    <div class="modal-header">
+      <h2 id="editModalTitle" class="modal-title"><img src="{{ url_for('static', filename='icons/pencil.svg') }}"
+          class="app-icon" alt=""> {{ t.modal_edit_title }}</h2>
+      <button class="modal-close" aria-label="{{ t.btn_cancel }}" data-modal="editTaskModal">✕</button>
+    </div>
+
+    <p class="modal-info-msg"><img src="{{ url_for('static', filename='icons/alert.svg') }}" class="app-icon" alt=""> {{
+      t.modal_edit_readonly_msg }}</p>
+
+    <form method="POST" action="" novalidate id="editTaskForm">
+      {{ edit_form.hidden_tag() }}
+
+      <div class="form-group" style="padding: 0 1.5rem;">
+        <label for="et_title" class="form-label">{{ t.field_title_readonly }}</label>
+        <input type="text" id="et_title" class="form-control form-control-readonly" readonly aria-readonly="true"
+          tabindex="-1" />
+      </div>
+
+      <div class="form-group" style="padding: 0 1.5rem;">
+        <label for="et_description" class="form-label">{{ t.field_desc_readonly }}</label>
+        <textarea id="et_description" class="form-control form-control-readonly" rows="2" readonly aria-readonly="true"
+          tabindex="-1"></textarea>
+      </div>
+
+      <div class="form-row" style="padding: 0 1.5rem;">
+        <div class="form-group">
+          <label for="et_priority" class="form-label">{{ t.field_priority }}</label>
+          <select name="priority" id="et_priority" class="form-control" data-icon="{{ url_for('static', filename='icons/priority.svg') }}">
+            <option value="">{{ t.no_priority }}</option>
+            {% for storage_key, display_label in localized_default_priorities %}
+            <option value="{{ storage_key }}">{{ display_label }}</option>
+            {% endfor %}
+            {% for p in all_priorities if p not in DEFAULT_PRIORITIES %}
+            <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">{{ t.field_estimated_time }}</label>
+          <input type="number" name="estimated_time" id="et_estimated_time" min="0" class="form-control"
+            style="display:none" />
+
+          <div class="dur-picker-wrap">
+            <div class="picker-box" id="et_est_box" tabindex="0" role="button" aria-haspopup="true"
+              aria-label="{{ t.est_select }}">
+              <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/timer.svg') }}"
+                  class="app-icon" alt=""></span>
+              <span class="picker-box-val" id="et_est_display">{{ t.est_not_set }}</span>
+            </div>
+
+            <div class="time-picker hidden" id="et_est_popup" role="dialog" aria-label="{{ t.est_select }}">
+              <div class="time-picker-inner">
+                <div class="time-col">
+                  <button type="button" class="time-arrow" data-target="et_est_hr" data-dir="up"
+                    aria-label="{{ t.cal_next_month }}">&#9650;</button>
+                  <span class="time-val" id="et_est_hr">0</span>
+                  <button type="button" class="time-arrow" data-target="et_est_hr" data-dir="down"
+                    aria-label="{{ t.cal_prev_month }}">&#9660;</button>
+                  <span class="time-unit">{{ t.picker_unit_hour }}</span>
+                </div>
+                <span class="time-sep">:</span>
+                <div class="time-col">
+                  <button type="button" class="time-arrow" data-target="et_est_mn" data-dir="up"
+                    aria-label="{{ t.cal_next_month }}">&#9650;</button>
+                  <span class="time-val" id="et_est_mn">00</span>
+                  <button type="button" class="time-arrow" data-target="et_est_mn" data-dir="down"
+                    aria-label="{{ t.cal_prev_month }}">&#9660;</button>
+                  <span class="time-unit">{{ t.picker_unit_minute }}</span>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm time-confirm" id="et_est_confirm">{{ t.picker_confirm
+                }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split date/time for edit modal -->
+      <input type="hidden" name="expires_at" id="et_expires_at_hidden" />
+
+      <div class="form-group" style="padding: 0 1.5rem;">
+        <label class="form-label">{{ t.field_expires_at }} <span class="required">*</span></label>
+
+        <div class="picker-summary" id="et_picker_summary" aria-live="polite">
+          <span id="et_summary_text" class="picker-summary-text">{{ t.picker_not_selected }}</span>
+        </div>
+
+        <div class="picker-row">
+          <div class="picker-box" id="et_date_box" tabindex="0" role="button" aria-haspopup="true"
+            aria-label="{{ t.picker_select_date }}">
+            <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/calendar2.svg') }}"
+                class="app-icon" alt=""></span>
+            <span class="picker-box-val" id="et_date_display">{{ t.picker_select_date }}</span>
+          </div>
+          <div class="picker-box" id="et_time_box" tabindex="0" role="button" aria-haspopup="true"
+            aria-label="{{ t.picker_select_time }}">
+            <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/clock.svg') }}"
+                class="app-icon" alt=""></span>
+            <span class="picker-box-val" id="et_time_display">{{ t.picker_select_time }}</span>
+          </div>
+        </div>
+
+        <div class="jalali-cal hidden" id="et_cal_popup" role="dialog" aria-label="{{ t.cal_aria }}">
+          <div class="cal-header">
+            <button type="button" class="cal-nav" id="et_cal_prev" aria-label="{{ t.cal_prev_month }}">‹</button>
+            <span class="cal-month-year" id="et_cal_label"></span>
+            <button type="button" class="cal-nav" id="et_cal_next" aria-label="{{ t.cal_next_month }}">›</button>
+          </div>
+          <div class="cal-weekdays">
+            {% for h in t.cal_headers %}<span>{{ h }}</span>{% endfor %}
+          </div>
+          <div class="cal-days" id="et_cal_days"></div>
+        </div>
+
+        <div class="time-picker hidden" id="et_time_popup" role="dialog" aria-label="{{ t.time_picker_aria }}">
+          <div class="time-picker-inner">
+            <div class="time-col">
+              <button type="button" class="time-arrow" data-dir="up" data-target="et_hr">▲</button>
+              <span class="time-val" id="et_hr">12</span>
+              <button type="button" class="time-arrow" data-dir="down" data-target="et_hr">▼</button>
+              <span class="time-unit">{{ t.picker_unit_hour }}</span>
+            </div>
+            <span class="time-sep">:</span>
+            <div class="time-col">
+              <button type="button" class="time-arrow" data-dir="up" data-target="et_mn">▲</button>
+              <span class="time-val" id="et_mn">00</span>
+              <button type="button" class="time-arrow" data-dir="down" data-target="et_mn">▼</button>
+              <span class="time-unit">{{ t.picker_unit_minute }}</span>
+            </div>
+            <div class="time-col">
+              <button type="button" class="time-ampm-toggle" id="et_ampm">PM</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm time-confirm" id="et_time_confirm">{{ t.picker_confirm
+            }}</button>
+        </div>
+
+        <small class="form-hint">{{ t.picker_hint }}</small>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-modal="editTaskModal">{{ t.btn_cancel }}</button>
+        <button type="submit" class="btn btn-primary" id="editTaskSubmitBtn">{{ t.btn_save_changes }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{# Pass delete / done confirm strings to JS #}
+<script>
+  window.I18N = {
+    delete_confirm: {{ t.delete_confirm | tojson }},
+  picker_not_selected: {{ t.picker_not_selected | tojson }},
+  picker_select_date: {{ t.picker_select_date | tojson }},
+  picker_select_time: {{ t.picker_select_time | tojson }},
+  picker_alert: {{ (t.picker_select_date ~ ' — ' ~t.field_expires_at) | tojson }},
+  est_not_set: {{ t.est_not_set | tojson }},
+  js_am: {{ t.js_am | tojson }},
+  js_pm: {{ t.js_pm | tojson }},
+  js_not_selected: {{ t.js_not_selected | tojson }},
+  js_alert_select_date: {{ t.js_alert_select_date | tojson }},
+  };
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v={{ static_version('js/main.js') }}"></script>
+{% endblock %}

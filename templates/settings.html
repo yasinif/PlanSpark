@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+<!-- =====================================================================
+     FILE: templates/settings.html
+     PURPOSE: User settings page with organized panels for theme selection, language and date format preferences, and custom priority management.
+     ===================================================================== -->
+
+{% block title %}{{ t.settings_title }} — {{ t.brand }}{% endblock %}
+
+{% block content %}
+<section class="settings-section">
+
+  <h1 class="page-title"><img src="{{ url_for('static', filename='icons/settings.svg') }}" class="app-icon" alt=""> {{ t.settings_title }}</h1>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ THEME TOGGLE: Instant light/dark mode switching
+       --------------------------------------------------------------------- -->
+  <div class="settings-card glass">
+    <h2 class="settings-card-title"><img src="{{ url_for('static', filename='icons/theme.svg') }}" class="app-icon" alt=""> {{ t.settings_theme_card }}</h2>
+    
+    <div class="settings-group theme-settings-group">
+      <div class="toggle-group" role="radiogroup">
+        <label class="toggle-option" id="themeLightBtn">
+          <img src="{{ url_for('static', filename='icons/sun.svg') }}" class="app-icon theme-btn-icon" alt=""> {{ t.theme_light }}
+        </label>
+        <label class="toggle-option" id="themeDarkBtn">
+          <img src="{{ url_for('static', filename='icons/moon.svg') }}" class="app-icon theme-btn-icon" alt=""> {{ t.theme_dark }}
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ LANGUAGE & DATE FORMAT: Jalali/Gregorian and FA/EN preference form
+       --------------------------------------------------------------------- -->
+  
+  <div class="settings-card glass">
+    <h2 class="settings-card-title"><img src="{{ url_for('static', filename='icons/globe.svg') }}" class="app-icon" alt=""> {{ t.settings_lang_card }}</h2>
+
+    <form method="POST" action="{{ url_for('settings') }}" novalidate id="settingsForm">
+      {{ settings_form.hidden_tag() }}
+
+      <!-- Language toggle -->
+      <div class="settings-group">
+        <p class="settings-label">{{ t.settings_lang_label }}</p>
+        <div class="toggle-group" role="radiogroup" aria-label="{{ t.settings_lang_label }}">
+          {% for subfield in settings_form.language %}
+            <label
+              class="toggle-option {% if subfield.data == current_user.language %}active{% endif %}"
+              id="langLabel-{{ subfield.data }}"
+            >
+              {{ subfield(class="toggle-radio") }}
+              
+              {% if subfield.data == 'fa' %}
+                {{ t.lang_fa_name }}
+              {% elif subfield.data == 'en' %}
+                {{ t.lang_en_name }}
+              {% else %}
+                {{ subfield.label.text }}
+              {% endif %}
+              
+            </label>
+          {% endfor %}
+        </div>
+        {% if settings_form.language.errors %}
+          <ul class="field-errors">
+            {% for e in settings_form.language.errors %}<li>{{ e }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <!-- Date format toggle -->
+      <div class="settings-group">
+        <p class="settings-label">{{ t.settings_date_label }}</p>
+        <div class="toggle-group" role="radiogroup" aria-label="{{ t.settings_date_label }}">
+          {% for subfield in settings_form.date_format %}
+            <label
+              class="toggle-option {% if subfield.data == current_user.date_format %}active{% endif %}"
+              id="dfLabel-{{ subfield.data }}"
+            >
+              {{ subfield(class="toggle-radio") }}
+              
+              <!-- سیستم ترجمه هوشمند بر اساس نوع دیتا -->
+              {% if subfield.data == 'jalali' %}
+                {{ t.date_jalali }}
+              {% elif subfield.data == 'gregorian' %}
+                {{ t.date_gregorian }}
+              {% else %}
+                {{ subfield.label.text }}
+              {% endif %}
+              
+            </label>
+          {% endfor %}
+        </div>
+        {% if settings_form.date_format.errors %}
+          <ul class="field-errors">
+            {% for e in settings_form.date_format.errors %}<li>{{ e }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <!-- Date Style toggle -->
+      <div class="settings-group">
+        <p class="settings-label">{{ t.settings_date_style_label }}</p>
+        <div class="toggle-group" role="radiogroup" aria-label="{{ t.settings_date_style_label }}">
+          {% for subfield in settings_form.date_display_style %}
+            <label
+              class="toggle-option {% if subfield.data == current_user.date_display_style %}active{% endif %}"
+              id="dsLabel-{{ subfield.data }}"
+            >
+              {{ subfield(class="toggle-radio") }}
+              
+              <!-- سیستم ترجمه هوشمند -->
+              {% if subfield.data == 'text' %}
+                {{ t.date_style_text }}
+              {% elif subfield.data == 'numeric' %}
+                {{ t.date_style_numeric }}
+              {% else %}
+                {{ subfield.label.text }}
+              {% endif %}
+              
+            </label>
+          {% endfor %}
+        </div>
+        {% if settings_form.date_display_style.errors %}
+          <ul class="field-errors">
+            {% for e in settings_form.date_display_style.errors %}<li>{{ e }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+
+      <div class="settings-footer">
+        <button type="submit" class="btn btn-primary" id="saveSettingsBtn"><img src="{{ url_for('static', filename='icons/save.svg') }}" class="app-icon" alt=""> {{ t.settings_save }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ CUSTOM PRIORITY MANAGEMENT: User-defined priority labels with CRUD
+       --------------------------------------------------------------------- -->
+  <div class="settings-card glass">
+    <h2 class="settings-card-title"><img src="{{ url_for('static', filename='icons/tag.svg') }}" class="app-icon" alt=""> {{ t.settings_priorities_card }}</h2>
+    <p class="settings-card-subtitle">{{ t.settings_priorities_hint }}</p>
+
+    <!-- Default priorities (read-only) -->
+    <div class="priority-section">
+      <h3 class="priority-section-title">{{ t.settings_defaults_heading }}</h3>
+      <ul class="priority-list" aria-label="{{ t.settings_defaults_heading }}">
+        {% for storage_key, display_label in localized_default_priorities %}
+          <li class="priority-item priority-item-default">
+            <span class="priority-label">{{ display_label }}</span>
+            <span class="priority-badge-default">{{ t.priority_badge_default }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- User custom priorities -->
+    <div class="priority-section">
+      <h3 class="priority-section-title">{{ t.settings_custom_heading }}</h3>
+      <ul class="priority-list" id="customPriorityList" aria-label="{{ t.settings_custom_heading }}">
+        {% for cp in custom_priorities %}
+          <li class="priority-item" id="cpItem-{{ cp.id }}">
+            <span class="priority-label">{{ cp.name }}</span>
+            <form
+              method="POST"
+              action="{{ url_for('priority_delete', priority_id=cp.id) }}"
+              class="inline-form"
+              id="cpDeleteForm-{{ cp.id }}"
+            >
+              {{ csrf_form.hidden_tag() }}
+              <input type="hidden" name="next_url" value="{{ url_for('settings') }}" />
+              <button
+                type="button"
+                class="btn btn-delete btn-xs"
+                aria-label="{{ t.btn_delete_priority }} {{ cp.name }}"
+                data-priority-name="{{ cp.name }}"
+                data-form-id="cpDeleteForm-{{ cp.id }}"
+                data-confirm-tpl="{{ t.settings_delete_priority_confirm }}"
+              ><img src="{{ url_for('static', filename='icons/trash.svg') }}" class="app-icon" alt=""> {{ t.btn_delete_priority }}</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="priority-empty">{{ t.settings_no_custom }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+   <!-- Add new custom priority -->
+    {% set cp_count = custom_priorities | length %}
+    <div class="priority-add-section">
+      {% if cp_count < 5 %}
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          id="showAddPriorityInputBtn"
+          aria-expanded="false"
+          aria-controls="addPriorityInputArea"
+        ><img src="{{ url_for('static', filename='icons/plus.svg') }}" class="app-icon" alt=""> {{ t.settings_add_priority }}</button>
+      {% else %}
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          disabled aria-disabled="true"
+        ><img src="{{ url_for('static', filename='icons/plus.svg') }}" class="app-icon" alt=""> {{ t.settings_add_limit }}</button>
+      {% endif %}
+
+      <div class="add-priority-input hidden" id="addPriorityInputArea">
+        <form method="POST" action="{{ url_for('priority_create') }}" novalidate id="createPriorityForm">
+          {{ priority_form.hidden_tag() }}
+          <input type="hidden" name="next_url" value="{{ url_for('settings') }}" />
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="cp_name" class="form-label">{{ t.settings_new_name_label }}</label>
+            {{ priority_form.name(id="cp_name", class="form-control", placeholder=t.settings_new_name_placeholder) }}
+          </div>
+          <div class="settings-footer" style="margin-top: 0.75rem;">
+            <button type="button" class="btn btn-outline btn-sm" id="cancelAddPriorityBtn">{{ t.btn_cancel }}</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="savePriorityBtn"><img src="{{ url_for('static', filename='icons/save.svg') }}" class="app-icon" alt=""> {{ t.btn_save }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- ---------------------------------------------------------------------
+     ⬛ PAGE SCRIPTS: Theme toggle, radio sync, priority form, and flash dismiss
+     --------------------------------------------------------------------- -->
+<script>
+'use strict';
+
+// Theme Instant Toggle Logic
+const lightBtn = document.getElementById('themeLightBtn');
+const darkBtn  = document.getElementById('themeDarkBtn');
+
+function updateThemeButtons(isDark) {
+  if (isDark) {
+    if (darkBtn) darkBtn.classList.add('active');
+    if (lightBtn) lightBtn.classList.remove('active');
+  } else {
+    if (lightBtn) lightBtn.classList.add('active');
+    if (darkBtn) darkBtn.classList.remove('active');
+  }
+}
+
+// وضعیت اولیه دکمه‌های تم هنگام باز کردن صفحه
+updateThemeButtons(document.body.classList.contains('dark'));
+
+// همگام‌سازی دکمه‌ها در صورت تغییر از جای دیگر
+window.addEventListener('themeChanged', function(e) {
+  updateThemeButtons(e.detail.isDark);
+});
+
+// اعمال فوری تم با کلیک روی دکمه‌ها
+if (lightBtn && darkBtn) {
+  lightBtn.addEventListener('click', function() { window.applyTheme(false); });
+  darkBtn.addEventListener('click', function() { window.applyTheme(true); });
+}
+
+// Toggle active class on radio labels
+document.querySelectorAll('.toggle-radio').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    const group = this.closest('.toggle-group');
+    if (!group) return;
+    group.querySelectorAll('.toggle-option').forEach(l => l.classList.remove('active'));
+    this.closest('.toggle-option').classList.add('active');
+  });
+});
+
+// Delete priority confirm using custom modal (Glassmorphism)
+document.querySelectorAll('[data-form-id][data-priority-name]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const name = btn.getAttribute('data-priority-name');
+    const tpl  = btn.getAttribute('data-confirm-tpl') || 'Delete "{name}"?';
+    const msg  = tpl.replace('{name}', name);
+    
+    // تشخیص خودکار زبان برای عنوان مودال
+    const titleText = document.documentElement.lang === 'fa' ? 'حذف اولویت' : 'Delete Priority';
+
+    // استفاده از مودال کاستوم مرکزی (با قابلیت फॉل‌بک به مرورگر در صورت خطا)
+    if (window.showCustomConfirm) {
+      window.showCustomConfirm(titleText, msg, function() {
+        document.getElementById(btn.getAttribute('data-form-id')).submit();
+      }, true); // کلمه true دکمه تایید را قرمز (حالت Danger) می‌کند
+    } else {
+      if (confirm(msg)) {
+        document.getElementById(btn.getAttribute('data-form-id')).submit();
+      }
+    }
+  });
+});
+
+// Add priority: show/hide
+const showAddBtn = document.getElementById('showAddPriorityInputBtn');
+const addArea    = document.getElementById('addPriorityInputArea');
+const cancelBtn  = document.getElementById('cancelAddPriorityBtn');
+
+if (showAddBtn && addArea) {
+  showAddBtn.addEventListener('click', function() {
+    addArea.classList.remove('hidden');
+    showAddBtn.setAttribute('aria-expanded', 'true');
+    const inp = document.getElementById('cp_name');
+    if (inp) inp.focus();
+  });
+}
+if (cancelBtn && addArea) {
+  cancelBtn.addEventListener('click', function() {
+    addArea.classList.add('hidden');
+    if (showAddBtn) showAddBtn.setAttribute('aria-expanded', 'false');
+    const inp = document.getElementById('cp_name');
+    if (inp) inp.value = '';
+  });
+}
+
+// Flash auto-dismiss
+document.querySelectorAll('.flash').forEach(function(flash) {
+  setTimeout(function() {
+    flash.style.transition = 'opacity 0.5s';
+    flash.style.opacity = '0';
+    setTimeout(function() { flash.remove(); }, 500);
+  }, 5000);
+});
+
+</script>
+{% endblock %}

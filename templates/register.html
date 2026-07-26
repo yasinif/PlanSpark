@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+<!-- =====================================================================
+     FILE: templates/register.html
+     PURPOSE: User registration page with bilingual sign-up form, security recovery words, and password confirmation with visibility toggles.
+     ===================================================================== -->
+
+{% block title %}{{ t.register_title }} — {{ t.brand }}{% endblock %}
+
+{% block content %}
+<!-- ---------------------------------------------------------------------
+     ⬛ REGISTRATION FORM: Sign-up card with username, name, and password fields
+     --------------------------------------------------------------------- -->
+<div class="auth-page">
+  <div class="auth-card glass">
+
+    <div class="auth-logo">
+  <span class="auth-logo-icon">
+    <img src="{{ url_for('static', filename='icons/192.png') }}" class="app-icon" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 10px;" alt="PlanSpark">
+  </span>
+  <h1 class="auth-title">{{ t.register_title }}</h1>
+  <p class="auth-subtitle">{{ t.register_subtitle }}</p>
+</div> 
+
+
+    <form
+      method="POST"
+      action="{{ url_for('register') }}"
+      novalidate
+      aria-label="{{ t.register_form_aria }}"
+    >
+      {{ form.hidden_tag() }}
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name" class="form-label">{{ t.field_name }}</label>
+          {{ form.name(
+            class="form-control" + (" form-control-error" if form.name.errors else ""),
+            id="name",
+            placeholder=t.register_name_placeholder,
+            autocomplete="given-name"
+          ) }}
+          {% if form.name.errors %}
+            <ul class="field-errors">
+              {% for error in form.name.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="family" class="form-label">{{ t.field_family }}</label>
+          {{ form.family(
+            class="form-control" + (" form-control-error" if form.family.errors else ""),
+            id="family",
+            placeholder=t.register_family_placeholder,
+            autocomplete="family-name"
+          ) }}
+          {% if form.family.errors %}
+            <ul class="field-errors">
+              {% for error in form.family.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username" class="form-label">{{ t.field_username }}</label>
+        {{ form.username(
+          class="form-control" + (" form-control-error" if form.username.errors else ""),
+          id="username",
+          placeholder=t.register_username_placeholder,
+          autocomplete="username",
+          autofocus=true
+        ) }}
+        {% if form.username.errors %}
+          <ul class="field-errors">
+            {% for error in form.username.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <!-- ---------------------------------------------------------------------
+           ⬛ SECURITY WORDS: Two-column recovery word inputs for password reset
+           --------------------------------------------------------------------- -->
+      <!-- سیستم کلمات امنیتی (۲ کلمه در یک ردیف) -->
+      <div>
+        <label class="form-label">{{ t.register_rec_info }}</label>
+        <div class="form-row">
+          <div class="form-group">
+            {{ form.recovery_word_1(class="form-control" + (" form-control-error" if form.recovery_word_1.errors else ""), placeholder=t.field_rec_word1, autocomplete="off") }}
+            {% if form.recovery_word_1.errors %}
+              <ul class="field-errors">
+                {% for error in form.recovery_word_1.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            {{ form.recovery_word_2(class="form-control" + (" form-control-error" if form.recovery_word_2.errors else ""), placeholder=t.field_rec_word2, autocomplete="off") }}
+            {% if form.recovery_word_2.errors %}
+              <ul class="field-errors">
+                {% for error in form.recovery_word_2.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">{{ t.field_password }}</label>
+        <div class="password-wrapper">
+          {{ form.password(
+            class="form-control" + (" form-control-error" if form.password.errors else ""),
+            id="password",
+            placeholder=t.register_password_placeholder,
+            autocomplete="new-password"
+          ) }}
+          <button
+            type="button"
+            class="password-toggle"
+            aria-label="{{ t.toggle_password_label }}"
+            data-target="password"
+          ><img src="{{ url_for('static', filename='icons/view.svg') }}" class="app-icon" alt=""></button>
+        </div>
+        {% if form.password.errors %}
+          <ul class="field-errors">
+            {% for error in form.password.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password" class="form-label">{{ t.field_confirm_password }}</label>
+        <div class="password-wrapper">
+          {{ form.confirm_password(
+            class="form-control" + (" form-control-error" if form.confirm_password.errors else ""),
+            id="confirm_password",
+            placeholder=t.register_confirm_placeholder,
+            autocomplete="new-password"
+          ) }}
+          <button
+            type="button"
+            class="password-toggle"
+            aria-label="{{ t.toggle_confirm_label }}"
+            data-target="confirm_password"
+          ><img src="{{ url_for('static', filename='icons/view.svg') }}" class="app-icon" alt=""></button>
+        </div>
+        {% if form.confirm_password.errors %}
+          <ul class="field-errors">
+            {% for error in form.confirm_password.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block auth-submit-btn" id="registerSubmitBtn">
+        {{ t.register_btn }}
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      {{ t.register_have_account }}
+      <a href="{{ url_for('login') }}">{{ t.register_login_link }}</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- ---------------------------------------------------------------------
+     ⬛ PAGE SCRIPTS: Password visibility toggle handlers
+     --------------------------------------------------------------------- -->
+<script>
+'use strict';
+document.querySelectorAll('.password-toggle').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const input = document.getElementById(this.getAttribute('data-target'));
+    if (!input) return;
+    if (input.type === 'password') { 
+      input.type = 'text'; 
+      this.innerHTML = '<img src="{{ url_for("static", filename="icons/hide.svg") }}" class="app-icon" alt="">'; 
+    }
+    else { 
+      input.type = 'password'; 
+      this.innerHTML = '<img src="{{ url_for("static", filename="icons/view.svg") }}" class="app-icon" alt="">'; 
+    }
+  });
+});
+</script>
+{% endblock %}

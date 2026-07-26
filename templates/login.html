@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+<!-- =====================================================================
+     FILE: templates/login.html
+     PURPOSE: Login page with secure sign-in form, password visibility toggle, and integrated password recovery modal using security word verification.
+     ===================================================================== -->
+
+{% block title %}{{ t.login_title }} — {{ t.brand }}{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <!-- ---------------------------------------------------------------------
+       ⬛ LOGIN FORM: Email and password authentication card
+       --------------------------------------------------------------------- -->
+  <div class="auth-card glass">
+    <div class="auth-logo">
+      <span class="auth-logo-icon">
+        <img src="{{ url_for('static', filename='icons/192.png') }}" class="app-icon" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 10px;" alt="PlanSpark">
+      </span>
+      <h1 class="auth-title">{{ t.brand }}</h1>
+      <p class="auth-subtitle" id="authSubtitle">{{ t.login_subtitle }}</p>
+    </div>
+
+    <!-- Alert Box for AJAX errors on main page -->
+    <div id="mainAlert" class="alert-message"></div>
+
+    <form method="POST" action="{{ url_for('login') }}" novalidate aria-label="{{ t.login_form_aria }}">
+      {{ form.hidden_tag() }}
+
+      <div class="form-group">
+        <label for="username" class="form-label">{{ t.field_username }}</label>
+        {{ form.username(
+          class="form-control" + (" form-control-error" if form.username.errors else ""),
+          id="username",
+          placeholder=t.login_username_placeholder,
+          autocomplete="username",
+          autofocus=true
+        ) }}
+        {% if form.username.errors %}
+          <ul class="field-errors">
+            {% for error in form.username.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">{{ t.field_password }}</label>
+        <div class="password-wrapper">
+          {{ form.password(
+            class="form-control" + (" form-control-error" if form.password.errors else ""),
+            id="password",
+            placeholder=t.login_password_placeholder,
+            autocomplete="current-password"
+          ) }}
+          <button type="button" class="password-toggle" aria-label="{{ t.toggle_password_label }}" data-target="password">
+            <img src="{{ url_for('static', filename='icons/view.svg') }}" class="app-icon" alt="">
+          </button>
+        </div>
+        {% if form.password.errors %}
+          <ul class="field-errors">
+            {% for error in form.password.errors %}<li>{{ t.get(error, error) }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+        <a class="forgot-password-link" id="btnForgotPass">{{ t.recovery_forgot_pass }}</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block auth-submit-btn">{{ t.login_btn }}</button>
+    </form>
+
+    <p class="auth-switch">
+      {{ t.login_no_account }} <a href="{{ url_for('register') }}">{{ t.login_signup_link }}</a>
+    </p>
+  </div>
+</div>
+
+<!-- ---------------------------------------------------------------------
+     ⬛ RECOVERY MODAL: Password reset via security word verification
+     --------------------------------------------------------------------- -->
+<div id="recoveryModal" class="modal-overlay hidden">
+  <div class="modal glass">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ t.recovery_title }}</h2>
+      <button type="button" class="modal-close" id="closeRecoveryModal" aria-label="Close">✕</button>
+    </div>
+    
+    <div class="recovery-modal-body">
+      <!-- Alert Box for AJAX errors -->
+      <div id="recoveryAlert" class="alert-message"></div>
+
+      <!-- VIEW 2: 2 WORDS INPUT -->
+      <div id="view-recovery-tasks">
+        <p class="form-label recovery-instruction">
+          {{ t.recovery_step2_msg }}
+        </p>
+        <div class="recovery-grid">
+          <input type="text" class="form-control recovery-word-input" placeholder="{{ t.field_rec_word1 }}">
+          <input type="text" class="form-control recovery-word-input" placeholder="{{ t.field_rec_word2 }}">
+        </div>
+        
+        <!-- دکمه‌های تایید و انصراف -->
+        <div class="recovery-footer-actions">
+          <button type="button" class="btn btn-outline back-to-login">{{ t.recovery_btn_cancel }}</button>
+          <button type="button" class="btn btn-primary" id="btnVerifyTasks">{{ t.recovery_btn_verify }}</button>
+        </div>
+      </div>
+
+      <!-- VIEW 3: SET NEW PASSWORD -->
+      <div id="view-recovery-reset" class="hidden">
+        <div class="form-group">
+          <label for="new_password" class="form-label">{{ t.recovery_new_pass_label }}</label>
+          <div class="password-wrapper">
+            <input type="password" id="new_password" class="form-control" placeholder="{{ t.recovery_new_pass_placeholder }}">
+            <button type="button" class="password-toggle" data-target="new_password">
+              <img src="{{ url_for('static', filename='icons/view.svg') }}" class="app-icon" alt="">
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-group recovery-confirm-group">
+          <label for="confirm_password" class="form-label">{{ t.field_confirm_password }}</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirm_password" class="form-control" placeholder="{{ t.recovery_new_pass_placeholder }}">
+            <button type="button" class="password-toggle" data-target="confirm_password">
+              <img src="{{ url_for('static', filename='icons/view.svg') }}" class="app-icon" alt="">
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-block auth-submit-btn" id="btnResetPassword">
+          <img src="{{ url_for('static', filename='icons/save.svg') }}" class="app-icon" alt=""> {{ t.recovery_btn_save }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- ---------------------------------------------------------------------
+     ⬛ PAGE SCRIPTS: Password toggle, CSRF setup, and async recovery flow
+     --------------------------------------------------------------------- -->
+<script>
+'use strict';
+const csrfToken = "{{ csrf_token() }}";
+const i18nRec = {
+  err_empty: "{{ t.recovery_err_empty_user }}",
+  err_fill: "{{ t.recovery_err_fill_all }}",
+  err_min: "{{ t.recovery_err_min_length }}",
+  err_mismatch: "{{ t.val_confirm_mismatch }}",
+  err_net: "{{ t.recovery_err_network }}",
+  msg_redir: "{{ t.recovery_msg_redirect }}"
+};
+
+// Toggle password visibility
+document.querySelectorAll('.password-toggle').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const input = document.getElementById(this.getAttribute('data-target'));
+    if (!input) return;
+    if (input.type === 'password') { 
+      input.type = 'text'; 
+      this.innerHTML = '<img src="{{ url_for("static", filename="icons/hide.svg") }}" class="app-icon" alt="">'; 
+    } else { 
+      input.type = 'password'; 
+      this.innerHTML = '<img src="{{ url_for("static", filename="icons/view.svg") }}" class="app-icon" alt="">'; 
+    }
+  });
+});
+
+// Recovery Modal Logic
+const recModal = document.getElementById('recoveryModal');
+const vTasks = document.getElementById('view-recovery-tasks');
+const vReset = document.getElementById('view-recovery-reset');
+const alertBox = document.getElementById('recoveryAlert');
+const mainAlertBox = document.getElementById('mainAlert');
+let recoveryUsername = "";
+
+function showMainAlert(msg, isSuccess = false) {
+  mainAlertBox.textContent = msg;
+  mainAlertBox.className = `alert-message ${isSuccess ? 'alert-success' : 'alert-danger'}`;
+  mainAlertBox.style.display = 'block';
+}
+
+function showAlert(msg, isSuccess = false) {
+  alertBox.textContent = msg;
+  alertBox.className = `alert-message ${isSuccess ? 'alert-success' : 'alert-danger'}`;
+  alertBox.style.display = 'block';
+}
+
+function hideAlert() { 
+  alertBox.style.display = 'none'; 
+  mainAlertBox.style.display = 'none';
+}
+
+function openModal() {
+  hideAlert();
+  vReset.classList.add('hidden');
+  vTasks.classList.remove('hidden');
+  recModal.classList.remove('hidden');
+}
+
+function closeModal() {
+  recModal.classList.add('hidden');
+}
+
+// Close Modal Events
+document.getElementById('closeRecoveryModal').addEventListener('click', closeModal);
+document.querySelectorAll('.back-to-login').forEach(btn => btn.addEventListener('click', closeModal));
+recModal.addEventListener('click', (e) => { if (e.target === recModal) closeModal(); });
+
+// 1. Click "Forgot Password"
+document.getElementById('btnForgotPass').addEventListener('click', async () => {
+  const usernameInput = document.getElementById('username');
+  if (!usernameInput.value.trim()) {
+    showMainAlert(i18nRec.err_empty);
+    usernameInput.focus();
+    return;
+  }
+  
+  recoveryUsername = usernameInput.value.trim();
+  hideAlert();
+  
+  try {
+    const res = await fetch('/api/recovery/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ username: recoveryUsername })
+    });
+    const data = await res.json();
+    
+    if (res.ok) { 
+      openModal(); 
+    } else { 
+      showMainAlert(data.error); 
+    }
+  } catch (err) { showMainAlert(i18nRec.err_net); }
+});
+
+// 2. Submit 5 Tasks
+document.getElementById('btnVerifyTasks').addEventListener('click', async () => {
+  const inputs = document.querySelectorAll('.recovery-word-input');
+  const guesses = Array.from(inputs).map(i => i.value);
+  
+  if (guesses.some(g => !g.trim())) {
+    showAlert(i18nRec.err_fill);
+    return;
+  }
+  
+  try {
+    const res = await fetch('/api/recovery/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ username: recoveryUsername, guesses: guesses })
+    });
+    const data = await res.json();
+    
+    if (res.ok) { 
+      vTasks.classList.add('hidden');
+      vReset.classList.remove('hidden');
+      showAlert(data.message, true); 
+    } else { 
+      showAlert(data.error); 
+    }
+  } catch (err) { showAlert(i18nRec.err_net); }
+});
+
+// 3. Reset Password
+document.getElementById('btnResetPassword').addEventListener('click', async () => {
+  const newPass = document.getElementById('new_password').value;
+  const confPass = document.getElementById('confirm_password').value;
+  
+  if (newPass.length < 8) { showAlert(i18nRec.err_min); return; }
+  if (newPass !== confPass) { showAlert(i18nRec.err_mismatch); return; }
+  
+  try {
+    const res = await fetch('/api/recovery/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ password: newPass })
+    });
+    const data = await res.json();
+    
+    if (res.ok) {
+      showAlert(data.message + i18nRec.msg_redir, true);
+      setTimeout(() => window.location.reload(), 1500);
+    } else { showAlert(data.error); }
+  } catch (err) { showAlert(i18nRec.err_net); }
+});
+</script>
+{% endblock %}

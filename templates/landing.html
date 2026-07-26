@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+<!-- =====================================================================
+     FILE: templates/landing.html
+     PURPOSE: Public-facing marketing landing page. Standalone design showcasing features, value propositions, FAQ, testimonials, and call-to-action sections.
+     ===================================================================== -->
+
+{% block title %}{{ t.brand }} — {{ t.landing_hero_title }}{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}?v={{ static_version('css/landing.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="lp-wrap">
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ HERO SECTION: Main headline, subtitle, and CTA buttons
+       --------------------------------------------------------------------- -->
+  <section class="lp-hero glass" aria-label="hero">
+    <p class="lp-eyebrow">— {{ t.landing_eyebrow }}</p>
+    <h1 class="lp-hero-title">{{ t.landing_hero_title }}</h1>
+    <p class="lp-hero-sub">{{ t.landing_hero_sub }}</p>
+    <div class="lp-cta-row">
+      <a href="{{ url_for('register') }}" class="btn btn-primary lp-cta-btn" id="landingCtaStart">{{ t.landing_cta_start }}</a>
+      <a href="#lp-features"              class="btn btn-outline lp-cta-btn" id="landingCtaFeatures">{{ t.landing_cta_features }}</a>
+    </div>
+    <div class="lp-trust-row">
+  <div class="lp-trust-item">
+    <span class="lp-trust-icon-box"><img src="{{ url_for('static', filename='icons/free.svg') }}" class="app-icon" alt=""></span>
+    <span class="lp-trust-text">{{ t.landing_trust_1 }}</span>
+  </div>
+  <div class="lp-trust-item">
+    <span class="lp-trust-icon-box"><img src="{{ url_for('static', filename='icons/globe.svg') }}" class="app-icon" alt=""></span>
+    <span class="lp-trust-text">{{ t.landing_trust_2 }}</span>
+  </div>
+  <div class="lp-trust-item">
+    <span class="lp-trust-icon-box"><img src="{{ url_for('static', filename='icons/calendar2.svg') }}" class="app-icon" alt=""></span>
+    <span class="lp-trust-text">{{ t.landing_trust_3 }}</span>
+  </div>
+</div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ OMITTED BLOCKS: Sections skipped per content integrity guardrails
+       --------------------------------------------------------------------- -->
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ FEATURES GRID: Two-column showcase of application capabilities
+       --------------------------------------------------------------------- -->
+  <section class="lp-section" id="lp-features" aria-labelledby="featHeading">
+    <div class="lp-section-header">
+      <p class="lp-eyebrow">— {{ t.landing_feat_eyebrow }}</p>
+      <h2 class="lp-section-title" id="featHeading">{{ t.landing_feat_heading }}</h2>
+    </div>
+
+    <div class="lp-grid-2">
+  <article class="lp-card glass">
+    <div class="lp-card-icon-box"><img src="{{ url_for('static', filename='icons/calendar2.svg') }}" class="app-icon" alt=""></div>
+    <h3 class="lp-card-title">{{ t.landing_f1_title }}</h3>
+    <p  class="lp-card-desc">{{ t.landing_f1_desc }}</p>
+  </article>
+  <article class="lp-card glass">
+    <div class="lp-card-icon-box"><img src="{{ url_for('static', filename='icons/globe.svg') }}" class="app-icon" alt=""></div>
+    <h3 class="lp-card-title">{{ t.landing_f2_title }}</h3>
+    <p  class="lp-card-desc">{{ t.landing_f2_desc }}</p>
+  </article>
+  <article class="lp-card glass">
+    <div class="lp-card-icon-box"><img src="{{ url_for('static', filename='icons/circle.svg') }}" class="app-icon" alt=""></div>
+    <h3 class="lp-card-title">{{ t.landing_f3_title }}</h3>
+    <p  class="lp-card-desc">{{ t.landing_f3_desc }}</p>
+  </article>
+  <article class="lp-card glass">
+    <div class="lp-card-icon-box"><img src="{{ url_for('static', filename='icons/analytics.svg') }}" class="app-icon" alt=""></div>
+    <h3 class="lp-card-title">{{ t.landing_f4_title }}</h3>
+    <p  class="lp-card-desc">{{ t.landing_f4_desc }}</p>
+  </article>
+  <article class="lp-card glass">
+    <div class="lp-card-icon-box"><img src="{{ url_for('static', filename='icons/tag.svg') }}" class="app-icon" alt=""></div>
+    <h3 class="lp-card-title">{{ t.landing_f5_title }}</h3>
+    <p  class="lp-card-desc">{{ t.landing_f5_desc }}</p>
+  </article>
+  <article class="lp-card glass">
+    <div class="lp-card-icon-box"><img src="{{ url_for('static', filename='icons/lock.svg') }}" class="app-icon" alt=""></div>
+    <h3 class="lp-card-title">{{ t.landing_f6_title }}</h3>
+    <p  class="lp-card-desc">{{ t.landing_f6_desc }}</p>
+  </article>
+</div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ VALUE PROPOSITION: Why-choose-us rows with benefit descriptions
+       --------------------------------------------------------------------- -->
+  <section class="lp-section lp-why" aria-labelledby="whyHeading">
+    <div class="lp-section-header">
+      <p  class="lp-eyebrow">— {{ t.landing_why_eyebrow }}</p>
+      <h2 class="lp-section-title" id="whyHeading">{{ t.landing_why_heading }}</h2>
+      <p  class="lp-section-sub">{{ t.landing_why_sub }}</p>
+    </div>
+
+    <div class="lp-why-list glass">
+  <div class="lp-why-item">
+    <div class="lp-why-icon-box"><img src="{{ url_for('static', filename='icons/calendar2.svg') }}" class="app-icon" alt=""></div>
+    <div class="lp-why-content">
+      <h3 class="lp-why-title">{{ t.landing_w1_title }}</h3>
+      <p  class="lp-why-desc">{{ t.landing_w1_desc }}</p>
+    </div>
+  </div>
+  <div class="lp-why-item">
+    <div class="lp-why-icon-box"><img src="{{ url_for('static', filename='icons/lock.svg') }}" class="app-icon" alt=""></div>
+    <div class="lp-why-content">
+      <h3 class="lp-why-title">{{ t.landing_w2_title }}</h3>
+      <p  class="lp-why-desc">{{ t.landing_w2_desc }}</p>
+    </div>
+  </div>
+  <div class="lp-why-item">
+    <div class="lp-why-icon-box"><img src="{{ url_for('static', filename='icons/shield.svg') }}" class="app-icon" alt=""></div>
+    <div class="lp-why-content">
+      <h3 class="lp-why-title">{{ t.landing_w3_title }}</h3>
+      <p  class="lp-why-desc">{{ t.landing_w3_desc }}</p>
+    </div>
+  </div>
+</div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ TESTIMONIALS: Review placeholder without fabricated content
+       --------------------------------------------------------------------- -->
+  <section class="lp-section lp-reviews" aria-labelledby="reviewsHeading">
+    <div class="lp-section-header">
+      <p  class="lp-eyebrow">— {{ t.landing_reviews_eyebrow }}</p>
+      <h2 class="lp-section-title" id="reviewsHeading">{{ t.landing_reviews_heading }}</h2>
+    </div>
+    <div class="lp-reviews-placeholder glass">
+  <div class="lp-placeholder-icon-box">
+    <img src="{{ url_for('static', filename='icons/comment.svg') }}" class="app-icon" alt="">
+  </div>
+  <p class="lp-placeholder-text">{{ t.landing_reviews_placeholder }}</p>
+</div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ FAQ ACCORDION: Expandable question-answer section
+       --------------------------------------------------------------------- -->
+  <section class="lp-section lp-faq" aria-labelledby="faqHeading">
+    <div class="lp-section-header">
+      <p  class="lp-eyebrow">— {{ t.landing_faq_eyebrow }}</p>
+      <h2 class="lp-section-title" id="faqHeading">{{ t.landing_faq_heading }}</h2>
+    </div>
+
+    <div class="lp-faq-list">
+      <div class="lp-faq-item glass" id="faqItem1">
+        <button class="lp-faq-q" aria-expanded="false" aria-controls="faqA1" id="faqQ1">
+          <span>{{ t.landing_faq1_q }}</span>
+          <span class="lp-faq-chevron" aria-hidden="true">›</span>
+        </button>
+        <div class="lp-faq-a" id="faqA1" role="region" aria-labelledby="faqQ1">
+          <p>{{ t.landing_faq1_a }}</p>
+        </div>
+      </div>
+      <div class="lp-faq-item glass" id="faqItem2">
+        <button class="lp-faq-q" aria-expanded="false" aria-controls="faqA2" id="faqQ2">
+          <span>{{ t.landing_faq2_q }}</span>
+          <span class="lp-faq-chevron" aria-hidden="true">›</span>
+        </button>
+        <div class="lp-faq-a" id="faqA2" role="region" aria-labelledby="faqQ2">
+          <p>{{ t.landing_faq2_a }}</p>
+        </div>
+      </div>
+      <div class="lp-faq-item glass" id="faqItem3">
+        <button class="lp-faq-q" aria-expanded="false" aria-controls="faqA3" id="faqQ3">
+          <span>{{ t.landing_faq3_q }}</span>
+          <span class="lp-faq-chevron" aria-hidden="true">›</span>
+        </button>
+        <div class="lp-faq-a" id="faqA3" role="region" aria-labelledby="faqQ3">
+          <p>{{ t.landing_faq3_a }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ FINAL CTA: Bottom call-to-action strip with register button
+       --------------------------------------------------------------------- -->
+  <section class="lp-cta-band glass" aria-label="call to action">
+    <h2 class="lp-cta-band-title">{{ t.landing_cta2_heading }}</h2>
+    <p  class="lp-cta-band-sub">{{ t.landing_cta2_sub }}</p>
+    <a  href="{{ url_for('register') }}" class="btn btn-primary lp-cta-btn" id="landingCtaBottom">{{ t.landing_cta2_btn }}</a>
+  </section>
+
+  <!-- ---------------------------------------------------------------------
+       ⬛ FOOTER: Landing page footer with copyright
+       --------------------------------------------------------------------- -->
+  <footer class="lp-footer" role="contentinfo">
+    <span class="lp-footer-copy">{{ t.landing_footer_copy }}</span>
+    <a href="#" class="lp-footer-top">{{ t.landing_footer_top }}</a>
+  </footer>
+
+</div><!-- .lp-wrap -->
+{% endblock %}
+
+{% block scripts %}
+<!-- ---------------------------------------------------------------------
+     ⬛ PAGE SCRIPTS: Landing page JavaScript
+     --------------------------------------------------------------------- -->
+<script src="{{ url_for('static', filename='js/landing.js') }}?v={{ static_version('js/landing.js') }}"></script>
+{% endblock %}
+

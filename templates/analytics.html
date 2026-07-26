@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+<!-- =====================================================================
+     FILE: templates/analytics.html
+     PURPOSE: Analytics dashboard page displaying visual statistics, Chart.js donut charts, and filterable reports derived from user task data.
+     ===================================================================== -->
+
+{% block title %}{{ t.analytics_title }} — {{ t.brand }}{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- ---------------------------------------------------------------------
+     ⬛ ANALYTICS DASHBOARD: Chart grid with overview and filtered statistics
+     --------------------------------------------------------------------- -->
+<section class="analytics-section">
+
+  <h1 class="page-title"><img src="{{ url_for('static', filename='icons/analytics.svg') }}" class="app-icon" alt=""> {{ t.analytics_title }}</h1>
+
+  <div class="analytics-grid">
+
+    <!-- Box 1: All tasks overview -->
+    <article class="analytics-box glass" aria-label="{{ t.analytics_overview }}">
+      <h2 class="analytics-box-title">{{ t.analytics_overview }}</h2>
+      <p class="analytics-box-subtitle">{{ t.analytics_overview_sub }}</p>
+
+      {% if box1_total == 0 %}
+        <div class="chart-empty-state">
+          <canvas id="box1EmptyCanvas" width="140" height="140" aria-label="{{ t.analytics_no_tasks }}"></canvas>
+          <p class="chart-empty-msg">{{ t.analytics_no_tasks }}</p>
+        </div>
+      {% else %}
+        <div class="chart-wrapper">
+          <canvas id="box1Chart" width="140" height="140" aria-label="{{ t.analytics_overview }}"></canvas>
+        </div>
+      {% endif %}
+
+      <ul class="chart-legend" aria-label="{{ t.chart_legend_aria }}">
+        <li class="legend-item">
+          <span class="legend-swatch" style="background: var(--color-pending)"></span>
+          <span class="legend-label">{{ t.status_pending }}</span>
+          <span class="legend-count">{{ box1_counts.pending }}</span>
+          <span class="legend-pct">
+            {% if box1_total > 0 %}({{ "%.0f"|format(box1_counts.pending / box1_total * 100) }}%){% else %}—{% endif %}
+          </span>
+        </li>
+        <li class="legend-item">
+          <span class="legend-swatch" style="background: var(--color-done)"></span>
+          <span class="legend-label">{{ t.status_done }}</span>
+          <span class="legend-count">{{ box1_counts.done }}</span>
+          <span class="legend-pct">
+            {% if box1_total > 0 %}({{ "%.0f"|format(box1_counts.done / box1_total * 100) }}%){% else %}—{% endif %}
+          </span>
+        </li>
+        <li class="legend-item">
+          <span class="legend-swatch" style="background: var(--color-expired)"></span>
+          <span class="legend-label">{{ t.status_expired }}</span>
+          <span class="legend-count">{{ box1_counts.expired }}</span>
+          <span class="legend-pct">
+            {% if box1_total > 0 %}({{ "%.0f"|format(box1_counts.expired / box1_total * 100) }}%){% else %}—{% endif %}
+          </span>
+        </li>
+      </ul>
+
+      <div class="analytics-total">
+        {{ t.analytics_total }} <strong>{{ box1_total }}</strong> {{ t.analytics_tasks_unit }}
+      </div>
+    </article>
+
+
+    <!-- Box 2: Filtered stats -->
+    <article class="analytics-box glass" aria-label="{{ t.analytics_filtered }}">
+      <h2 class="analytics-box-title">{{ t.analytics_filtered }}</h2>
+      <p class="analytics-box-subtitle">{{ t.analytics_filtered_sub }}</p>
+
+      {% if box2_total == 0 %}
+        <div class="chart-empty-state">
+          <canvas id="box2EmptyCanvas" width="1140" height="140" aria-label="{{ t.analytics_no_tasks_range }}"></canvas>
+          <p class="chart-empty-msg">{{ t.analytics_no_tasks_range }}</p>
+        </div>
+      {% else %}
+        <div class="chart-wrapper">
+          <canvas id="box2Chart" width="140" height="140" aria-label="{{ t.analytics_filtered }}"></canvas>
+        </div>
+      {% endif %}
+
+      <ul class="chart-legend" aria-label="{{ t.chart_legend_aria }}">
+        <li class="legend-item">
+          <span class="legend-swatch" style="background: var(--color-pending)"></span>
+          <span class="legend-label">{{ t.status_pending }}</span>
+          <span class="legend-count">{{ box2_counts.pending }}</span>
+          <span class="legend-pct">
+            {% if box2_total > 0 %}({{ "%.0f"|format(box2_counts.pending / box2_total * 100) }}%){% else %}—{% endif %}
+          </span>
+        </li>
+        <li class="legend-item">
+          <span class="legend-swatch" style="background: var(--color-done)"></span>
+          <span class="legend-label">{{ t.status_done }}</span>
+          <span class="legend-count">{{ box2_counts.done }}</span>
+          <span class="legend-pct">
+            {% if box2_total > 0 %}({{ "%.0f"|format(box2_counts.done / box2_total * 100) }}%){% else %}—{% endif %}
+          </span>
+        </li>
+        <li class="legend-item">
+          <span class="legend-swatch" style="background: var(--color-expired)"></span>
+          <span class="legend-label">{{ t.status_expired }}</span>
+          <span class="legend-count">{{ box2_counts.expired }}</span>
+          <span class="legend-pct">
+            {% if box2_total > 0 %}({{ "%.0f"|format(box2_counts.expired / box2_total * 100) }}%){% else %}—{% endif %}
+          </span>
+        </li>
+      </ul>
+
+      <!-- ---------------------------------------------------------------------
+           ⬛ FILTER FORM: Time-range and priority filter with Jalali date pickers
+           --------------------------------------------------------------------- -->
+      <form method="GET" action="{{ url_for('analytics') }}" id="analyticsFilterForm" class="analytics-filter-form" novalidate>
+
+        <div class="filter-row filter-row-compact">
+          <div class="filter-group">
+            <label for="a_time_range" class="filter-label">{{ t.filter_time_range }}</label>
+            <select name="time_range" id="a_time_range" class="filter-select filter-select-sm">
+              <option value="all"     {% if time_range == 'all'     %}selected{% endif %}>{{ t.range_all }}</option>
+              <option value="daily"   {% if time_range == 'daily'   %}selected{% endif %}>{{ t.range_daily }}</option>
+              <option value="weekly"  {% if time_range == 'weekly'  %}selected{% endif %}>{{ t.range_weekly }}</option>
+              <option value="monthly" {% if time_range == 'monthly' %}selected{% endif %}>{{ t.range_monthly }}</option>
+              <option value="yearly"  {% if time_range == 'yearly'  %}selected{% endif %}>{{ t.range_yearly }}</option>
+              <option value="custom"  {% if time_range == 'custom'  %}selected{% endif %}>{{ t.range_custom }}</option>
+            </select>
+          </div>
+
+          <div class="filter-group analytics-custom-date hidden" id="aCustomDateGroup">
+            <label class="filter-label">{{ t.filter_from }}</label>
+            <input type="hidden" name="start_date" id="aStartDateHidden" value="{{ start_date }}" />
+            <div class="filter-picker-wrapper">
+              <div class="picker-box filter-picker-box" id="aStartDateBox" tabindex="0" role="button" aria-haspopup="true" aria-label="{{ t.picker_select_date }}">
+                <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/calendar.svg') }}" class="app-icon" alt=""></span>
+                <span class="picker-box-val" id="aStartDateDisplay">{{ t.picker_select_date }}</span>
+              </div>
+              <div class="jalali-cal filter-cal hidden" id="aStartDateCal" role="dialog" aria-label="{{ t.cal_aria }}">
+                <div class="cal-header">
+                  <button type="button" class="cal-nav" id="aStartDateCalPrev" aria-label="{{ t.cal_prev_month }}">‹</button>
+                  <span class="cal-month-year" id="aStartDateCalLabel"></span>
+                  <button type="button" class="cal-nav" id="aStartDateCalNext" aria-label="{{ t.cal_next_month }}">›</button>
+                </div>
+                <div class="cal-weekdays">
+                  {% for h in t.cal_headers %}<span>{{ h }}</span>{% endfor %}
+                </div>
+                <div class="cal-days" id="aStartDateCalDays"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group analytics-custom-date hidden" id="aCustomDateGroupEnd">
+            <label class="filter-label">{{ t.filter_to }}</label>
+            <input type="hidden" name="end_date" id="aEndDateHidden" value="{{ end_date }}" />
+            <div class="filter-picker-wrapper">
+              <div class="picker-box filter-picker-box" id="aEndDateBox" tabindex="0" role="button" aria-haspopup="true" aria-label="{{ t.picker_select_date }}">
+                <span class="picker-box-icon"><img src="{{ url_for('static', filename='icons/calendar.svg') }}" class="app-icon" alt=""></span>
+                <span class="picker-box-val" id="aEndDateDisplay">{{ t.picker_select_date }}</span>
+              </div>
+              <div class="jalali-cal filter-cal hidden" id="aEndDateCal" role="dialog" aria-label="{{ t.cal_aria }}">
+                <div class="cal-header">
+                  <button type="button" class="cal-nav" id="aEndDateCalPrev" aria-label="{{ t.cal_prev_month }}">‹</button>
+                  <span class="cal-month-year" id="aEndDateCalLabel"></span>
+                  <button type="button" class="cal-nav" id="aEndDateCalNext" aria-label="{{ t.cal_next_month }}">›</button>
+                </div>
+                <div class="cal-weekdays">
+                  {% for h in t.cal_headers %}<span>{{ h }}</span>{% endfor %}
+                </div>
+                <div class="cal-days" id="aEndDateCalDays"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label for="a_priority" class="filter-label">{{ t.filter_priority }}</label>
+            <select name="priority" id="a_priority" class="filter-select filter-select-sm">
+              <option value="all" {% if priority_filter == 'all' %}selected{% endif %}>{{ t.status_all }}</option>
+              {% for storage_key, display_label in localized_default_priorities %}
+                <option value="{{ storage_key }}" {% if priority_filter == storage_key %}selected{% endif %}>{{ display_label }}</option>
+              {% endfor %}
+              {% for p in all_priorities if p not in DEFAULT_PRIORITIES %}
+                <option value="{{ p }}" {% if priority_filter == p %}selected{% endif %}>{{ p }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-group filter-actions">
+            <button type="submit" class="btn btn-primary btn-xs" id="applyAnalyticsFilterBtn">{{ t.filter_apply }}</button>
+            <a href="{{ url_for('analytics') }}" class="btn btn-outline btn-xs" id="resetAnalyticsFilterBtn">{{ t.filter_clear }}</a>
+          </div>
+        </div>
+
+        {% if time_filter_error %}
+          <p class="filter-error" role="alert"><img src="{{ url_for('static', filename='icons/alert.svg') }}" class="app-icon" alt=""> {{ time_filter_error }}</p>
+        {% endif %}
+
+      </form>
+
+      <div class="analytics-total">
+        {{ t.analytics_total }} <strong>{{ box2_total }}</strong> {{ t.analytics_tasks_unit }}
+      </div>
+
+    </article>
+
+  </div>
+
+  <div class="analytics-back">
+    <a href="{{ url_for('index') }}" class="btn btn-outline">{{ t.analytics_back }}</a>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- ---------------------------------------------------------------------
+     ⬛ PAGE SCRIPTS: Analytics data injection and chart initialization
+     --------------------------------------------------------------------- -->
+<script>
+  window.ANALYTICS_DATA = {
+    box1: { pending: {{ box1_counts.pending }}, done: {{ box1_counts.done }}, expired: {{ box1_counts.expired }}, total: {{ box1_total }} },
+    box2: { pending: {{ box2_counts.pending }}, done: {{ box2_counts.done }}, expired: {{ box2_counts.expired }}, total: {{ box2_total }} }
+  };
+  window.timeRange = {{ time_range | tojson }};
+  window.CHART_LABELS = {
+    pending:              {{ t.status_pending           | tojson }},
+    done:                 {{ t.status_done              | tojson }},
+    expired:              {{ t.status_expired           | tojson }},
+    analytics_no_tasks:       {{ t.analytics_no_tasks       | tojson }},
+    analytics_no_tasks_range: {{ t.analytics_no_tasks_range | tojson }},
+  };
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v={{ static_version('js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}?v={{ static_version('js/analytics.js') }}"></script>
+{% endblock %}

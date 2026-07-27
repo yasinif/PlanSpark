@@ -4,12 +4,12 @@
 
 // =====================================================================
 // FILE: static/sw.js
-// PURPOSE: Service Worker for the TaskMen PWA. Implements cache-first for static assets and network-first for dynamic requests with offline fallback.
+// PURPOSE: Service Worker for the PlanSpark PWA. Implements cache-first for static assets and network-first for dynamic requests with offline fallback.
 // =====================================================================
 
 
 // ---------------------------------------------------------------------
-// ⬛ CACHE CONFIGURATION: Versioned cache name and static asset list
+// CACHE CONFIGURATION: Versioned cache name and static asset list
 // ---------------------------------------------------------------------
 const CACHE_NAME = 'planspark-cache-v3'; 
 const ASSETS_TO_CACHE = [
@@ -23,7 +23,7 @@ const ASSETS_TO_CACHE = [
 ];
 
 // ---------------------------------------------------------------------
-// ⬛ INSTALL EVENT: Pre-cache critical static assets
+// INSTALL EVENT: Pre-cache critical static assets
 // ---------------------------------------------------------------------
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -35,7 +35,7 @@ self.addEventListener('install', (event) => {
 });
 
 // ---------------------------------------------------------------------
-// ⬛ ACTIVATE EVENT: Clean up stale cache versions
+// ACTIVATE EVENT: Clean up stale cache versions
 // ---------------------------------------------------------------------
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -53,7 +53,7 @@ self.addEventListener('activate', (event) => {
 });
 
 // ---------------------------------------------------------------------
-// ⬛ FETCH EVENT: Routing strategy with offline fallback
+// FETCH EVENT: Routing strategy with offline fallback
 // ---------------------------------------------------------------------
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;

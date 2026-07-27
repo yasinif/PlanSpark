@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- =====================================================================
      FILE: templates/base.html
-     PURPOSE: Master layout template for the TaskMen application. Defines the HTML skeleton, shared head assets, persistent site header, flash toast container, bottom navigation, global confirm modal, and base scripts.
+     PURPOSE: Master layout template for the PlanSpark application. Defines the HTML skeleton, shared head assets, persistent site header, flash toast container, bottom navigation, global confirm modal, and base scripts.
      ===================================================================== -->
 <html lang="{{ user_lang }}" dir="{{ 'rtl' if user_lang == 'fa' else 'ltr' }}">
 <head>
@@ -16,7 +16,7 @@
   
   
   <!-- ---------------------------------------------------------------------
-       ⬛ PWA META TAGS: Manifest, theme colors, and app icons
+       PWA META TAGS: Manifest, theme colors, and app icons
        --------------------------------------------------------------------- -->
   <link rel="manifest" href="/manifest.json" />
   
@@ -52,7 +52,7 @@
   </script>
 
   <!-- ---------------------------------------------------------------------
-       ⬛ SITE HEADER: Navigation bar with clock, auth controls, and theme toggle
+       SITE HEADER: Navigation bar with clock, auth controls, and theme toggle
        --------------------------------------------------------------------- -->
   <header class="site-header glass">
     <div class="header-inner">
@@ -108,7 +108,7 @@
                title="{{ t.lang_switch_to_fa }}">{{ t.lang_switch_to_fa }}</a>
           {% endif %}
 
-          {# دکمه‌های احراز هویت #}
+          {# Authentication buttons #}
           {% if request.endpoint == 'login' %}
             <a href="{{ url_for('register') }}" class="btn btn-outline btn-sm">{{ t.btn_register }}</a>
           {% else %}
@@ -120,7 +120,7 @@
   </header>
 
   <!-- ---------------------------------------------------------------------
-       ⬛ FLASH MESSAGES: Glassmorphism toast notification container
+       FLASH MESSAGES: Glassmorphism toast notification container
        --------------------------------------------------------------------- -->
   <div class="flash-toast-container" role="alert" aria-live="assertive">
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -136,14 +136,14 @@
   </div>
 
   <!-- ---------------------------------------------------------------------
-       ⬛ MAIN CONTENT AREA: Primary content block for child templates
+       MAIN CONTENT AREA: Primary content block for child templates
        --------------------------------------------------------------------- -->
   <main class="main-content">
     {% block content %}{% endblock %}
   </main>
 
   <!-- ---------------------------------------------------------------------
-       ⬛ BOTTOM NAVIGATION: Fixed mobile nav bar for authenticated users
+       BOTTOM NAVIGATION: Fixed mobile nav bar for authenticated users
        --------------------------------------------------------------------- -->
   {% if current_user.is_authenticated %}
   <nav class="bottom-nav glass" aria-label="{{ t.nav_home }}">
@@ -201,7 +201,7 @@
 {% endif %}
 
 <!-- ---------------------------------------------------------------------
-     ⬛ GLOBAL CONFIRM MODAL: Reusable delete confirmation dialog
+     GLOBAL CONFIRM MODAL: Reusable delete confirmation dialog
      --------------------------------------------------------------------- -->
 <div class="modal-overlay hidden" id="globalConfirmModal" role="dialog" aria-modal="true" style="z-index: 10000; display: flex; align-items: center; justify-content: center;">
   <div class="modal glass" style="max-width: 340px; text-align: center; padding: 2.2rem 1.5rem; display: flex; flex-direction: column; align-items: center;">
@@ -222,7 +222,7 @@
 </div>
 
 <!-- ---------------------------------------------------------------------
-     ⬛ GLOBAL SCRIPTS: Theme, clock, confirm modal, toast, and PWA registration
+     GLOBAL SCRIPTS: Theme, clock, confirm modal, toast, and PWA registration
      --------------------------------------------------------------------- -->
 <script src="{{ url_for('static', filename='js/jalaali.js') }}"></script>
 
@@ -455,7 +455,7 @@
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   }, { passive: true });
 
-  // --- ▷ PWA Service Worker Registration ---
+  // ---  PWA Service Worker Registration ---
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')

@@ -30,7 +30,7 @@ from sqlalchemy.orm import validates
 db = SQLAlchemy()
 
 # ---------------------------------------------------------------------
-# ⬛ VALIDATION CONSTANTS: Regex patterns and allowed value sets
+# VALIDATION CONSTANTS: Regex patterns and allowed value sets
 # ---------------------------------------------------------------------
 # Name fields: accept Persian script, Latin letters (A-Z/a-z), and spaces.
 # Explicitly rejects: ASCII digits (0-9), Persian digits (۰-۹), symbols, punctuation.
@@ -47,7 +47,7 @@ VALID_DATE_STYLES = {"text", "numeric"}
 
 
 # ---------------------------------------------------------------------
-# ⬛ USER MODEL: Registered user with hashed credentials and preferences
+# USER MODEL: Registered user with hashed credentials and preferences
 # ---------------------------------------------------------------------
 
 class User(UserMixin, db.Model):
@@ -64,11 +64,11 @@ class User(UserMixin, db.Model):
     language: str = db.Column(db.String(2), nullable=False, default="fa")
     date_format: str = db.Column(db.String(10), nullable=False, default="jalali")
     date_display_style: str = db.Column(db.String(10), nullable=False, default="text")
-    # --- ▷ Recovery System Fields ---
+    # ---  Recovery System Fields ---
     recovery_w1_hash: str = db.Column(db.String(128), nullable=False)
     recovery_w2_hash: str = db.Column(db.String(128), nullable=False)
     
-    # --- ▷ Rate Limiting Fields ---
+    # ---  Rate Limiting Fields ---
     recovery_attempts: int = db.Column(db.Integer, nullable=False, default=0)
     last_recovery_attempt: Optional[datetime] = db.Column(db.DateTime, nullable=True)
     created_at: datetime = db.Column(
@@ -94,7 +94,7 @@ class User(UserMixin, db.Model):
     def __repr__(self) -> str:
         return f"<User id={self.id} username={self.username!r}>"
 
-    # --- ▷ Field Validators ---
+    # ---  Field Validators ---
 
     @validates("username")
     def validate_username(self, key: str, value: str) -> str:
@@ -152,7 +152,7 @@ class User(UserMixin, db.Model):
 
 
 # ---------------------------------------------------------------------
-# ⬛ TASK MODEL: User task with computed status and Jalali deadline
+# TASK MODEL: User task with computed status and Jalali deadline
 # ---------------------------------------------------------------------
 
 class Task(db.Model):
@@ -189,7 +189,7 @@ class Task(db.Model):
     def __repr__(self) -> str:
         return f"<Task id={self.id} title={self.title!r} is_done={self.is_done}>"
 
-    # --- ▷ Field Validators ---
+    # ---  Field Validators ---
 
     @validates("title")
     def validate_title(self, key: str, value: str) -> str:
@@ -222,7 +222,7 @@ class Task(db.Model):
 
 
 # ---------------------------------------------------------------------
-# ⬛ CUSTOM PRIORITY MODEL: User-defined priority labels
+# CUSTOM PRIORITY MODEL: User-defined priority labels
 # ---------------------------------------------------------------------
 
 class CustomPriority(db.Model):
@@ -245,7 +245,7 @@ class CustomPriority(db.Model):
     def __repr__(self) -> str:
         return f"<CustomPriority id={self.id} name={self.name!r} user_id={self.user_id}>"
 
-    # --- ▷ Field Validators ---
+    # ---  Field Validators ---
 
     @validates("name")
     def validate_name(self, key: str, value: str) -> str:
@@ -257,7 +257,7 @@ class CustomPriority(db.Model):
 
 
 # ---------------------------------------------------------------------
-# ⬛ DATABASE INDEXES: Composite index for efficient status queries
+# DATABASE INDEXES: Composite index for efficient status queries
 # ---------------------------------------------------------------------
 
 # Composite index for efficient status filtering (is_done + expires_at)

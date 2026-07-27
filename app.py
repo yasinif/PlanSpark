@@ -75,13 +75,13 @@ from utils import (
 )
 
 # ---------------------------------------------------------------------
-# ⬛ ENVIRONMENT SETUP: Load .env file for configuration secrets
+# ENVIRONMENT SETUP: Load .env file for configuration secrets
 # ---------------------------------------------------------------------
 
 load_dotenv()
 
 # ---------------------------------------------------------------------
-# ⬛ APPLICATION FACTORY: Flask app creation and configuration
+# APPLICATION FACTORY: Flask app creation and configuration
 # ---------------------------------------------------------------------
 
 
@@ -90,7 +90,7 @@ def create_app() -> Flask:
 
     app = Flask(__name__)
 
-    # --- ▷ Core Config ---
+    # ---  Core Config ---
     secret_key = os.environ.get("SECRET_KEY")
     if not secret_key:
         raise RuntimeError(
@@ -99,22 +99,22 @@ def create_app() -> Flask:
         )
     app.config["SECRET_KEY"] = secret_key
 
-    # --- ▷ Database Config ---
+    # ---  Database Config ---
     db_url = os.environ.get("DATABASE_URL", "sqlite:///instance/todo.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # --- ▷ Session Config ---
+    # ---  Session Config ---
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-    # --- ▷ CSRF Config ---
+    # ---  CSRF Config ---
     app.config["WTF_CSRF_ENABLED"] = True
 
-    # --- ▷ Disable static-file caching in development ---
+    # ---  Disable static-file caching in development ---
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
-    # --- ▷ Extensions ---
+    # ---  Extensions ---
     db.init_app(app)
     bcrypt = Bcrypt(app)
     csrf = CSRFProtect(app)
@@ -140,7 +140,7 @@ def create_app() -> Flask:
         val = get_translations(lang).get(key, key)
         return val.format(**kwargs) if kwargs else val
 
-    # --- ▷ User Loader ---
+    # ---  User Loader ---
     @login_manager.user_loader
     def load_user(user_id: str):
         return User.query.get(int(user_id))
@@ -190,7 +190,7 @@ def create_app() -> Flask:
         )
 
     # ---------------------------------------------------------------------
-    # ⬛ AUTH ROUTES: User registration, login, logout, and language switching
+    # AUTH ROUTES: User registration, login, logout, and language switching
     # ---------------------------------------------------------------------
 
     @app.route("/register", methods=["GET", "POST"])
@@ -253,7 +253,7 @@ def create_app() -> Flask:
         return render_template("register.html", form=form)
     
     # ---------------------------------------------------------------------
-    # ⬛ RECOVERY ROUTES: Password recovery via security word verification
+    # RECOVERY ROUTES: Password recovery via security word verification
     # ---------------------------------------------------------------------
 
     @app.route("/api/recovery/check", methods=["POST"])
@@ -393,7 +393,7 @@ def create_app() -> Flask:
         return redirect(request.referrer or url_for("login"))
 
     # ---------------------------------------------------------------------
-    # ⬛ PUBLIC ROUTES: Landing page and authenticated dashboard
+    # PUBLIC ROUTES: Landing page and authenticated dashboard
     # ---------------------------------------------------------------------
 
     @app.route("/")
@@ -523,7 +523,7 @@ def create_app() -> Flask:
         )
 
     # ---------------------------------------------------------------------
-    # ⬛ TASK CRUD ROUTES: Create, edit, mark-done, and delete tasks
+    # TASK CRUD ROUTES: Create, edit, mark-done, and delete tasks
     # ---------------------------------------------------------------------
 
     @app.route("/tasks/create", methods=["POST"])
@@ -655,7 +655,7 @@ def create_app() -> Flask:
         return redirect(url_for("index"))
 
     # ---------------------------------------------------------------------
-    # ⬛ CUSTOM PRIORITY ROUTES: User-defined priority label management
+    # CUSTOM PRIORITY ROUTES: User-defined priority label management
     # ---------------------------------------------------------------------
 
     @app.route("/priorities")
@@ -758,7 +758,7 @@ def create_app() -> Flask:
         return redirect(next_url)
 
     # ---------------------------------------------------------------------
-    # ⬛ SETTINGS ROUTE: User preferences for language and date format
+    # SETTINGS ROUTE: User preferences for language and date format
     # ---------------------------------------------------------------------
 
     @app.route("/settings", methods=["GET", "POST"])
@@ -807,7 +807,7 @@ def create_app() -> Flask:
         )
 
     # ---------------------------------------------------------------------
-    # ⬛ ANALYTICS ROUTE: Task statistics with filtered donut charts
+    # ANALYTICS ROUTE: Task statistics with filtered donut charts
     # ---------------------------------------------------------------------
 
     @app.route("/analytics")
@@ -908,7 +908,7 @@ def create_app() -> Flask:
     
 
     # ---------------------------------------------------------------------
-    # ⬛ PWA ROUTES: Service Worker and manifest serving
+    # PWA ROUTES: Service Worker and manifest serving
     # ---------------------------------------------------------------------
     
     @app.route("/sw.js")
@@ -925,20 +925,20 @@ def create_app() -> Flask:
     
 
     # ---------------------------------------------------------------------
-    # ⬛ DATABASE INITIALIZATION: CLI command for table creation
+    # DATABASE INITIALIZATION: CLI command for table creation
     # ---------------------------------------------------------------------
 
     @app.cli.command("init-db")
     def init_db_command():
         """Create all database tables."""
         db.create_all()
-        print("پایگاه داده با موفقیت ساخته شد.")
+        print("Database initialized successfully.")
 
     return app
 
 
 # ---------------------------------------------------------------------
-# ⬛ ENTRY POINT: App instantiation and development server
+# ENTRY POINT: App instantiation and development server
 # ---------------------------------------------------------------------
 
 app = create_app()

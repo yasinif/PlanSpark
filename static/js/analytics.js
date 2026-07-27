@@ -16,11 +16,11 @@
 
 // =====================================================================
 // FILE: static/js/analytics.js
-// PURPOSE: Client-side engine for the TaskMen Analytics dashboard. Renders Chart.js donut charts, computes visual statistics, and handles date-range filtering.
+// PURPOSE: Client-side engine for the PlanSpark Analytics dashboard. Renders Chart.js donut charts, computes visual statistics, and handles date-range filtering.
 // =====================================================================
 
 // ---------------------------------------------------------------------
-// ⬛ CHART CONSTANTS: Color palette matching CSS custom properties
+// CHART CONSTANTS: Color palette matching CSS custom properties
 // ---------------------------------------------------------------------
 // Color constants (match CSS :root variables)
 const COLORS = {
@@ -144,7 +144,7 @@ function getComputedCanvasBg(canvas) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ INITIALIZATION: Data loading and chart rendering on page load
+// INITIALIZATION: Data loading and chart rendering on page load
 // ---------------------------------------------------------------------
 (function initCharts() {
   const data = window.ANALYTICS_DATA;
@@ -178,7 +178,7 @@ function getComputedCanvasBg(canvas) {
 })();
 
 // ---------------------------------------------------------------------
-// ⬛ ANALYTICS FILTER: Custom date range visibility
+// ANALYTICS FILTER: Custom date range visibility
 // ---------------------------------------------------------------------
 (function initAnalyticsFilter() {
   const timeRangeSelect    = document.getElementById('a_time_range');

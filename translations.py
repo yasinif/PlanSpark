@@ -23,7 +23,7 @@ Rules:
 # =====================================================================
 
 # ---------------------------------------------------------------------
-# ⬛ TRANSLATIONS DICTIONARY: Complete FA/EN string mappings for all UI surfaces
+# TRANSLATIONS DICTIONARY: Complete FA/EN string mappings for all UI surfaces
 # ---------------------------------------------------------------------
 TRANSLATIONS = {
     "fa": {
@@ -665,7 +665,7 @@ TRANSLATIONS = {
 }
 
 # ---------------------------------------------------------------------
-# ⬛ HELPER FUNCTIONS: Translation lookup and priority localization utilities
+# HELPER FUNCTIONS: Translation lookup and priority localization utilities
 # ---------------------------------------------------------------------
 def get_translations(language: str = "fa") -> dict:
     """Return the translation dict for the given language code ('fa' or 'en')."""

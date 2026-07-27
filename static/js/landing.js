@@ -11,7 +11,7 @@
 // =====================================================================
 
 // ---------------------------------------------------------------------
-// ⬛ FAQ ACCORDION: Single-open toggle behavior for question items
+// FAQ ACCORDION: Single-open toggle behavior for question items
 // ---------------------------------------------------------------------
 document.querySelectorAll('.lp-faq-q').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -34,7 +34,7 @@ document.querySelectorAll('.lp-faq-q').forEach(btn => {
 
 
 // ---------------------------------------------------------------------
-// ⬛ PWA SMART BANNER: Landing Page - 30s Delay, Auto-Reprompt
+// PWA SMART BANNER: Landing Page - 30s Delay, Auto-Reprompt
 // ---------------------------------------------------------------------
 let deferredPrompt;
 const pwaInstallBanner = document.getElementById('pwaInstallBanner');

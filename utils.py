@@ -29,7 +29,7 @@ _FA_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
 _EN_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
 
 # ---------------------------------------------------------------------
-# ⬛ DIGIT LOCALE HELPERS: Persian and Latin digit conversion
+# DIGIT LOCALE HELPERS: Persian and Latin digit conversion
 # ---------------------------------------------------------------------
 
 def to_persian_digits(text: str) -> str:
@@ -59,11 +59,11 @@ def localize_digits(text: str, language: str = "fa") -> str:
 
 
 # ---------------------------------------------------------------------
-# ⬛ INPUT PIPELINE: Jalali date string to naive UTC datetime for DB storage
+# INPUT PIPELINE: Jalali date string to naive UTC datetime for DB storage
 # UNCHANGED — do not alter this function's signature or contract.
 # ---------------------------------------------------------------------
 
-# --- ▷ Jalali-to-UTC Converter ---
+# ---  Jalali-to-UTC Converter ---
 def jalali_str_to_utc_naive(jalali_str: str) -> datetime:
     """
     Convert a Jalali date/datetime string to a naive UTC datetime for DB storage.
@@ -117,12 +117,12 @@ def jalali_str_to_utc_naive(jalali_str: str) -> datetime:
 
 
 # ---------------------------------------------------------------------
-# ⬛ OUTPUT PIPELINE: Naive UTC datetime to localized display string
+# OUTPUT PIPELINE: Naive UTC datetime to localized display string
 # Delta 2.6: added date_format and language parameters for Gregorian/Jalali
 # and Persian/Latin digit switching. Default behaviour is unchanged.
 # ---------------------------------------------------------------------
 
-# --- ▷ UTC-to-Display Formatter ---
+# ---  UTC-to-Display Formatter ---
 def utc_naive_to_jalali_str(
     dt_utc_naive: Optional[datetime],
     fmt: Optional[str] = None,
@@ -175,22 +175,22 @@ def utc_naive_to_jalali_str(
 
 
 # ---------------------------------------------------------------------
-# ⬛ FILTER HELPERS: Time-range boundaries as naive UTC for DB queries
+# FILTER HELPERS: Time-range boundaries as naive UTC for DB queries
 # ---------------------------------------------------------------------
 
-# --- ▷ Tehran Time Helper ---
+# ---  Tehran Time Helper ---
 def _tehran_now() -> datetime:
     """Return the current aware datetime in Tehran timezone."""
     return datetime.now(TEHRAN_TZ)
 
 
-# --- ▷ Naive UTC Converter ---
+# ---  Naive UTC Converter ---
 def _tehran_to_utc_naive(tehran_aware: datetime) -> datetime:
     """Convert an aware Tehran datetime to naive UTC."""
     return tehran_aware.astimezone(UTC_TZ).replace(tzinfo=None)
 
 
-# --- ▷ Daily Range Boundary ---
+# ---  Daily Range Boundary ---
 def get_daily_range_utc() -> Tuple[datetime, datetime]:
     """
     Return (start_utc_naive, end_utc_naive) covering today in Tehran time.
@@ -203,7 +203,7 @@ def get_daily_range_utc() -> Tuple[datetime, datetime]:
     return _tehran_to_utc_naive(start_tehran), _tehran_to_utc_naive(end_tehran)
 
 
-# --- ▷ Weekly Range Boundary ---
+# ---  Weekly Range Boundary ---
 def get_weekly_range_utc() -> Tuple[datetime, datetime]:
     """
     Return (start_utc_naive, end_utc_naive) covering the current Jalali week.
@@ -237,7 +237,7 @@ def get_weekly_range_utc() -> Tuple[datetime, datetime]:
     return _tehran_to_utc_naive(start_tehran), _tehran_to_utc_naive(end_tehran)
 
 
-# --- ▷ Monthly Range Boundary ---
+# ---  Monthly Range Boundary ---
 def get_monthly_range_utc() -> Tuple[datetime, datetime]:
     """
     Return (start_utc_naive, end_utc_naive) covering the current Jalali month.
@@ -270,7 +270,7 @@ def get_monthly_range_utc() -> Tuple[datetime, datetime]:
     return _tehran_to_utc_naive(start_tehran), _tehran_to_utc_naive(end_tehran)
 
 
-# --- ▷ Yearly Range Boundary ---
+# ---  Yearly Range Boundary ---
 def get_yearly_range_utc() -> Tuple[datetime, datetime]:
     """
     Return (start_utc_naive, end_utc_naive) covering the current Jalali year.
@@ -295,7 +295,7 @@ def get_yearly_range_utc() -> Tuple[datetime, datetime]:
     return _tehran_to_utc_naive(start_tehran), _tehran_to_utc_naive(end_tehran)
 
 
-# --- ▷ Custom Range Boundary ---
+# ---  Custom Range Boundary ---
 def get_custom_range_utc(start_str: str, end_str: str) -> Tuple[datetime, datetime]:
     """
     Return (start_utc_naive, end_utc_naive) for a custom Jalali date range.
@@ -335,7 +335,7 @@ def get_custom_range_utc(start_str: str, end_str: str) -> Tuple[datetime, dateti
     return start_utc, end_utc
 
 
-# --- ▷ Task Status Logic ---
+# ---  Task Status Logic ---
 def get_task_status_python(is_done: bool, expires_at: Optional[datetime]) -> str:
     """
     Compute task status in Python after reading from DB.
@@ -358,7 +358,7 @@ def get_task_status_python(is_done: bool, expires_at: Optional[datetime]) -> str
 
 
 # ---------------------------------------------------------------------
-# ⬛ STATUS AND PRIORITY CONSTANTS: Label mappings and default priority levels
+# STATUS AND PRIORITY CONSTANTS: Label mappings and default priority levels
 # ---------------------------------------------------------------------
 
 # Mapping status strings to Persian labels

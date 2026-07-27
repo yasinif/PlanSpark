@@ -11,7 +11,7 @@ Note: All validator message= values are translation keys (val_*) resolved
 
 # =====================================================================
 # FILE: forms.py
-# PURPOSE: Defines all WTForms form classes for the TaskMen application, covering user authentication, task management, settings, and custom priorities.
+# PURPOSE: Defines all WTForms form classes for the PlanSpark application, covering user authentication, task management, settings, and custom priorities.
 # =====================================================================
 
 import re
@@ -38,7 +38,7 @@ from wtforms.validators import (
 )
 
 # ---------------------------------------------------------------------
-# ⬛ SHARED VALIDATOR CONSTANTS: Regex patterns and text normalization
+# SHARED VALIDATOR CONSTANTS: Regex patterns and text normalization
 # ---------------------------------------------------------------------
 
 # Name fields: accept Persian script, Latin letters (A-Z/a-z), and spaces.
@@ -59,7 +59,7 @@ def normalize_text(value):
 
 
 # ---------------------------------------------------------------------
-# ⬛ REGISTRATION FORM: New user sign-up with recovery words
+# REGISTRATION FORM: New user sign-up with recovery words
 # ---------------------------------------------------------------------
 
 class RegisterForm(FlaskForm):
@@ -133,7 +133,7 @@ class RegisterForm(FlaskForm):
 
 
 # ---------------------------------------------------------------------
-# ⬛ LOGIN FORM: Username and password authentication
+# LOGIN FORM: Username and password authentication
 # ---------------------------------------------------------------------
 
 class LoginForm(FlaskForm):
@@ -154,7 +154,7 @@ class LoginForm(FlaskForm):
 
 
 # ---------------------------------------------------------------------
-# ⬛ TASK CREATION FORM: New task with Jalali date and priority
+# TASK CREATION FORM: New task with Jalali date and priority
 # ---------------------------------------------------------------------
 
 class TaskForm(FlaskForm):
@@ -198,7 +198,7 @@ class TaskForm(FlaskForm):
 
 
 # ---------------------------------------------------------------------
-# ⬛ TASK EDIT FORM: Modify pending task priority, deadline, and estimate
+# TASK EDIT FORM: Modify pending task priority, deadline, and estimate
 # ---------------------------------------------------------------------
 
 class EditTaskForm(FlaskForm):
@@ -248,7 +248,7 @@ class EditTaskForm(FlaskForm):
 
 
 # ---------------------------------------------------------------------
-# ⬛ CUSTOM PRIORITY FORM: User-defined priority label creation
+# CUSTOM PRIORITY FORM: User-defined priority label creation
 # ---------------------------------------------------------------------
 
 class CustomPriorityForm(FlaskForm):
@@ -264,7 +264,7 @@ class CustomPriorityForm(FlaskForm):
 
 
 # ---------------------------------------------------------------------
-# ⬛ SETTINGS FORM: Language and date format preferences
+# SETTINGS FORM: Language and date format preferences
 # ---------------------------------------------------------------------
 
 class SettingsForm(FlaskForm):
@@ -288,7 +288,7 @@ class SettingsForm(FlaskForm):
 
 
 # ---------------------------------------------------------------------
-# ⬛ CSRF-ONLY FORM: Minimal CSRF token for action endpoints
+# CSRF-ONLY FORM: Minimal CSRF token for action endpoints
 # ---------------------------------------------------------------------
 
 class CSRFForm(FlaskForm):

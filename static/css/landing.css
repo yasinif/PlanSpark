@@ -1,10 +1,10 @@
 /* =====================================================================
    FILE: static/css/landing.css
-   PURPOSE: Dedicated stylesheet for the TaskMen public landing page. Provides a distinct visual design with hero section, feature cards, FAQ accordion, and CTA components using .lp-* scoped classes.
+   PURPOSE: Dedicated stylesheet for the PlanSpark public landing page. Provides a distinct visual design with hero section, feature cards, FAQ accordion, and CTA components using .lp-* scoped classes.
    ===================================================================== */
 
 /* ---------------------------------------------------------------------
-   ⬛ LAYOUT WRAPPER: Centered max-width container with flex column
+   LAYOUT WRAPPER: Centered max-width container with flex column
    --------------------------------------------------------------------- */
 .lp-wrap {
   max-width: 900px;
@@ -16,7 +16,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ SHARED SECTION PRIMITIVES: Eyebrow, headings, and card base styles
+   SHARED SECTION PRIMITIVES: Eyebrow, headings, and card base styles
    --------------------------------------------------------------------- */
 .lp-eyebrow {
   font-size: 0.72rem;
@@ -54,7 +54,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ HERO SECTION: Main hero with CTA buttons and trust indicators
+   HERO SECTION: Main hero with CTA buttons and trust indicators
    --------------------------------------------------------------------- */
 .lp-hero {
   padding: 2.8rem 2rem 2.4rem;
@@ -113,7 +113,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ FEATURE CARDS GRID: Two-column responsive feature showcase
+   FEATURE CARDS GRID: Two-column responsive feature showcase
    --------------------------------------------------------------------- */
 .lp-grid-2 {
   display: grid;
@@ -153,7 +153,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ VALUE PROPOSITION: Why-choose-us rows with icons
+   VALUE PROPOSITION: Why-choose-us rows with icons
    --------------------------------------------------------------------- */
 .lp-why-list {
   border-radius: var(--radius);
@@ -194,7 +194,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ TESTIMONIALS: Review placeholder section
+   TESTIMONIALS: Review placeholder section
    --------------------------------------------------------------------- */
 .lp-reviews-placeholder {
   border-radius: var(--radius);
@@ -216,7 +216,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ FAQ ACCORDION: Expandable question-answer items
+   FAQ ACCORDION: Expandable question-answer items
    --------------------------------------------------------------------- */
 .lp-faq-list {
   display: flex;
@@ -286,7 +286,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ FINAL CTA BAND: Bottom call-to-action strip
+   FINAL CTA BAND: Bottom call-to-action strip
    --------------------------------------------------------------------- */
 .lp-cta-band {
   border-radius: var(--radius);
@@ -311,7 +311,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ FOOTER: Landing page footer with links
+   FOOTER: Landing page footer with links
    --------------------------------------------------------------------- */
 .lp-footer {
   display: flex;
@@ -336,7 +336,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ RESPONSIVE (MOBILE): Breakpoint adjustments for ≤640px
+   RESPONSIVE (MOBILE): Breakpoint adjustments for ≤640px
    --------------------------------------------------------------------- */
 @media (max-width: 640px) {
   .lp-wrap { gap: 1.6rem; padding: 1rem 0.75rem 0; }
@@ -370,7 +370,7 @@
 }
 
 /* ---------------------------------------------------------------------
-   ⬛ RESPONSIVE (TABLET): Breakpoint adjustments for ≤768px
+   RESPONSIVE (TABLET): Breakpoint adjustments for ≤768px
    --------------------------------------------------------------------- */
 @media (max-width: 768px) {
   .lp-footer { justify-content: center; text-align: center; }

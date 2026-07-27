@@ -14,25 +14,25 @@
 
 // =====================================================================
 // FILE: static/js/main.js
-// PURPOSE: Core client-side engine for the TaskMen dashboard. Manages task CRUD, real-time UI updates, modals, filtering, drag-and-drop, theme switching, Jalali date pickers, and form validation.
+// PURPOSE: Core client-side engine for the PlanSpark dashboard. Manages task CRUD, real-time UI updates, modals, filtering, drag-and-drop, theme switching, Jalali date pickers, and form validation.
 // =====================================================================
 
 // ---------------------------------------------------------------------
-// ⬛ GUARD: Check dependencies
+// GUARD: Check dependencies
 // ---------------------------------------------------------------------
 if (typeof jalaali === 'undefined') {
   console.error('[main.js] jalaali-js library not found.');
 }
 
 // ---------------------------------------------------------------------
-// ⬛ LANGUAGE / DATE-FORMAT GLOBALS: Set by base.html inline script
+// LANGUAGE / DATE-FORMAT GLOBALS: Set by base.html inline script
 // ---------------------------------------------------------------------
 const USER_LANG_MAIN = document.documentElement.lang || 'fa';
 // USER_DATE_FMT is a const from base.html — available here as a global.
 const IS_GREGORIAN = (typeof USER_DATE_FMT !== 'undefined') && USER_DATE_FMT === 'gregorian';
 
 // ---------------------------------------------------------------------
-// ⬛ DIGIT HELPERS: Convert between Persian and English digits
+// DIGIT HELPERS: Convert between Persian and English digits
 // ---------------------------------------------------------------------
 function toPersian(n) {
   return String(n).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -45,7 +45,7 @@ function localizeN(n) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ CALENDAR CONSTANTS: Month/weekday names for Jalali and Gregorian
+// CALENDAR CONSTANTS: Month/weekday names for Jalali and Gregorian
 // ---------------------------------------------------------------------
 const STYLE_IS_NUMERIC = (typeof USER_DATE_STYLE !== 'undefined') && USER_DATE_STYLE === 'numeric';
 
@@ -88,7 +88,7 @@ function getWeekdayName(jy, jm, jd, isGregorianObj = null) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ CONVERSION: Delegate to jalaali-js
+// CONVERSION: Delegate to jalaali-js
 // ---------------------------------------------------------------------
 function gregorianToJalali(gy, gm, gd) { return jalaali.toJalaali(gy, gm, gd); }
 function jalaliToGregorian(jy, jm, jd) { return jalaali.toGregorian(jy, jm, jd); }
@@ -128,7 +128,7 @@ function gregorianFirstWeekday(gy, gm) {
 function jalaliFirstWeekday(jy, jm) { return jalaliWeekday(jy, jm, 1); }
 
 // ---------------------------------------------------------------------
-// ⬛ JALALICALENDAR WIDGET: Jalali UI
+// JALALICALENDAR WIDGET: Jalali UI
 // ---------------------------------------------------------------------
 class JalaliCalendar {
   constructor({ calPopupId, calDaysId, calLabelId, prevId, nextId, onSelect, disablePast = false }) {
@@ -224,7 +224,7 @@ class JalaliCalendar {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ GREGORIANCALENDAR WIDGET: Same API as JalaliCalendar, returns Gregorian coordinates
+// GREGORIANCALENDAR WIDGET: Same API as JalaliCalendar, returns Gregorian coordinates
 // ---------------------------------------------------------------------
 class GregorianCalendar {
   constructor({ calPopupId, calDaysId, calLabelId, prevId, nextId, onSelect, disablePast = false }) {
@@ -326,7 +326,7 @@ function makeCalendar(cfg) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ TIMEPICKER WIDGET: 12-hour AM/PM to 24-hour output
+// TIMEPICKER WIDGET: 12-hour AM/PM to 24-hour output
 // ---------------------------------------------------------------------
 class TimePicker {
   constructor({ popupId, hrId, mnId, ampmId, confirmId, onConfirm }) {
@@ -445,7 +445,7 @@ class TimePicker {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ DURATIONPICKER WIDGET: HH:MM spinner for estimated_time
+// DURATIONPICKER WIDGET: HH:MM spinner for estimated_time
 // ---------------------------------------------------------------------
 class DurationPicker {
   constructor({ boxId, displayId, hiddenId, popupId, hrId, mnId, confirmId, notSetLabel }) {
@@ -544,7 +544,7 @@ class DurationPicker {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ PICKERCONTROLLER: Wires date + time boxes to hidden input
+// PICKERCONTROLLER: Wires date + time boxes to hidden input
 // ---------------------------------------------------------------------
 class PickerController {
   constructor(cfg) {
@@ -742,7 +742,7 @@ class PickerController {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ FILTERDATEPICKER: Date-only picker for GET filter forms
+// FILTERDATEPICKER: Date-only picker for GET filter forms
 // ---------------------------------------------------------------------
 class FilterDatePicker {
   constructor({ boxId, displayId, hiddenId, calPopupId, calDaysId, calLabelId, prevId, nextId }) {
@@ -827,7 +827,7 @@ class FilterDatePicker {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ MODAL PICKERS: Instantiate pickers for create and edit modals
+// MODAL PICKERS: Instantiate pickers for create and edit modals
 // ---------------------------------------------------------------------
 let createPicker = null;
 let editPicker   = null;
@@ -877,7 +877,7 @@ if (document.getElementById('et_cal_popup')) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ DURATION PICKERS: Instantiate duration pickers for estimated_time
+// DURATION PICKERS: Instantiate duration pickers for estimated_time
 // ---------------------------------------------------------------------
 const NOT_SET_LABEL = (window.I18N && window.I18N.est_not_set) ? window.I18N.est_not_set : '—';
 
@@ -911,7 +911,7 @@ if (document.getElementById('et_est_popup')) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ INDEX FILTER PICKERS: Instantiate filter date pickers — index page
+// INDEX FILTER PICKERS: Instantiate filter date pickers — index page
 // ---------------------------------------------------------------------
 if (document.getElementById('startDateCal')) {
   new FilterDatePicker({
@@ -929,7 +929,7 @@ if (document.getElementById('endDateCal')) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ ANALYTICS FILTER PICKERS: Instantiate filter date pickers — analytics page
+// ANALYTICS FILTER PICKERS: Instantiate filter date pickers — analytics page
 // ---------------------------------------------------------------------
 if (document.getElementById('aStartDateCal')) {
   new FilterDatePicker({
@@ -947,7 +947,7 @@ if (document.getElementById('aEndDateCal')) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ TOAST VALIDATION: Validate before submit using Toast
+// TOAST VALIDATION: Validate before submit using Toast
 // ---------------------------------------------------------------------
 function showJSToast(msg) {
   const container = document.querySelector('.flash-toast-container');
@@ -970,7 +970,7 @@ function showJSToast(msg) {
   }, 4000);
 }
 
-// --- ▷ (Create): Validate create task form ---
+// ---  (Create): Validate create task form ---
 const createForm = document.getElementById('createTaskForm');
 
 // (Auto-resize)
@@ -1076,7 +1076,7 @@ if (createForm) {
   });
 }
 
-// --- ▷ (Edit): Validate edit task form ---
+// ---  (Edit): Validate edit task form ---
 const editForm = document.getElementById('editTaskForm');
 if (editForm) {
   editForm.addEventListener('submit', function (e) {
@@ -1092,7 +1092,7 @@ if (editForm) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ MODAL HELPERS: Open and close logic
+// MODAL HELPERS: Open and close logic
 // ---------------------------------------------------------------------
 function openModal(modalId) {
   const overlay = document.getElementById(modalId);
@@ -1135,7 +1135,7 @@ document.querySelectorAll('[data-modal]').forEach(btn => {
 });
 
 // ---------------------------------------------------------------------
-// ⬛ CREATE MODAL: Open create modal and reset picker to today
+// CREATE MODAL: Open create modal and reset picker to today
 // ---------------------------------------------------------------------
 const openCreateBtn = document.getElementById('openCreateModalBtn');
 if (openCreateBtn) {
@@ -1154,7 +1154,7 @@ if (openCreateBtn) {
 }
 
 // ---------------------------------------------------------------------
-// ⬛ EDIT MODAL: Open edit modal and populate from data-* attributes
+// EDIT MODAL: Open edit modal and populate from data-* attributes
 // ---------------------------------------------------------------------
 document.querySelectorAll('[id^="editBtn-"]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1233,7 +1233,7 @@ document.querySelectorAll('[id^="editBtn-"]').forEach(btn => {
 });
 
 // ---------------------------------------------------------------------
-// ⬛ MARK DONE: Async badge update (instant, before server round-trip)
+// MARK DONE: Async badge update (instant, before server round-trip)
 // ---------------------------------------------------------------------
 document.querySelectorAll('.done-form').forEach(form => {
   form.addEventListener('submit', function (e) {
@@ -1265,7 +1265,7 @@ document.querySelectorAll('.done-form').forEach(form => {
 });
 
 // ---------------------------------------------------------------------
-// ⬛ DELETE CONFIRM: Translated string from window.I18N
+// DELETE CONFIRM: Translated string from window.I18N
 // ---------------------------------------------------------------------
 document.querySelectorAll('[id^="deleteBtn-"]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1293,7 +1293,7 @@ document.querySelectorAll('[id^="deleteBtn-"]').forEach(btn => {
 });
 
 // ---------------------------------------------------------------------
-// ⬛ FILTER CUSTOM DATES: Show/hide custom date range groups
+// FILTER CUSTOM DATES: Show/hide custom date range groups
 // ---------------------------------------------------------------------
 const timeRangeFilter    = document.getElementById('timeRangeFilter');
 const customDateGroup    = document.getElementById('customDateGroup');
@@ -1325,7 +1325,7 @@ if (aTimeRange) {
 
 
 // ---------------------------------------------------------------------
-// ⬛ LIVE SEARCH: Instant Filter by Title
+// LIVE SEARCH: Instant Filter by Title
 // ---------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('taskLiveSearch');
@@ -1372,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
 // ---------------------------------------------------------------------
-// ⬛ CUSTOM SELECT DROPDOWNS: Auto-Converter for native selects
+// CUSTOM SELECT DROPDOWNS: Auto-Converter for native selects
 // ---------------------------------------------------------------------
 const nativeSelects = document.querySelectorAll('select.filter-select, select.form-control');
 
@@ -1439,7 +1439,7 @@ document.addEventListener('click', function() {
 
 
 // ---------------------------------------------------------------------
-// ⬛ PWA SMART BANNER: App Pages - 30s Delay, Session Memory
+// PWA SMART BANNER: App Pages - 30s Delay, Session Memory
 // ---------------------------------------------------------------------
 let deferredPrompt;
 const pwaInstallBanner = document.getElementById('pwaInstallBanner');

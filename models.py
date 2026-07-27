@@ -4,7 +4,7 @@ models.py — SQLAlchemy models for the Persian To-Do List app.
 Models:
     User            — registered user with hashed password
     Task            — task belonging to a user (status computed, never stored)
-    CustomPriority  — user-defined priority label (max 3 per user)
+    CustomPriority  — user-defined priority label (max 5 per user)
 
 Rules:
     - All DateTime fields are naive UTC (no tzinfo). Never store aware datetimes.

@@ -47,7 +47,7 @@ NAME_PATTERN = r"^[\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200c A-Za-z]+$"
 
 # Username: strict ASCII alphanumeric only.
 # Explicitly rejects: Persian/Unicode letters, underscores, spaces, symbols.
-USERNAME_PATTERN = r"^[A-Za-z0-9]+$"
+USERNAME_PATTERN = r"^[A-Za-z0-9_]+$"
 # Security Words: ONLY Persian and English letters. NO spaces, NO digits, NO symbols.
 WORD_PATTERN = r"^[\u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200cA-Za-z]+$"
 

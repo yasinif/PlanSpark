@@ -228,7 +228,7 @@ class Task(db.Model):
 class CustomPriority(db.Model):
     """
     A user-defined priority label.
-    Max 3 per user (enforced at application level, not DB level).
+    Max 5 per user (enforced at application level, not DB level).
     """
 
     __tablename__ = "custom_priorities"

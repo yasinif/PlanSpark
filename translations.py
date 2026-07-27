@@ -654,7 +654,6 @@ TRANSLATIONS = {
         "recovery_err_sys":          "System error occurred.",
         "field_rec_word1":           "Word 1 (e.g. Movie)",
         "field_rec_word2":           "Word 2 (e.g. City)",
-        "field_rec_word3":           "Word 3 (e.g. Friend)",
         "register_rec_info":         "Remember these 2 words for recovery (min 5 chars, letters only):",
         "val_rec_word_required":     "Security word is required.",
         "val_rec_word_length":       "Each word must be between 5 and 30 characters.",
